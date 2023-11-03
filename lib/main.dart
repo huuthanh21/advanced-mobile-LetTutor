@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lettutor/presentation/teacher_list/teacher_list_page.dart';
+import 'package:lettutor/presentation/tutor_detail/tutor_detail_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const TeacherListPage(),
+      home: const TutorDetailPage(),
     );
   }
 }

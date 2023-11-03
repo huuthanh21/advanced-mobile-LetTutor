@@ -3,8 +3,8 @@ import 'package:flutter_svg/svg.dart';
 
 import '../../common/widgets/top_app_bar_content.dart';
 
-class TeacherListPage extends StatelessWidget {
-  const TeacherListPage({super.key});
+class TutorListPage extends StatelessWidget {
+  const TutorListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
