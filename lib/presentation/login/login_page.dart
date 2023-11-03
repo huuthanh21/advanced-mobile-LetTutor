@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lettutor/common/widgets/TopAppBarContent.dart';
+import 'package:lettutor/common/widgets/top_app_bar_content.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -98,12 +98,10 @@ class LoginPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Container(
-                      child: const Center(
-                          child: Text("ĐĂNG NHẬP",
-                              style: TextStyle(
-                                  fontSize: 22, color: Colors.white))),
-                    ),
+                    child: const Center(
+                        child: Text("ĐĂNG NHẬP",
+                            style:
+                                TextStyle(fontSize: 22, color: Colors.white))),
                   ),
                   const Center(child: Text("Hoặc tiếp tục với")),
                   Row(
@@ -162,9 +160,7 @@ class LoginPage extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            child: Image.asset('assets/images/login_splash.png'),
-          ),
+          Image.asset('assets/images/login_splash.png'),
         ],
       ),
     );
