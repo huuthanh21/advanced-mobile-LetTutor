@@ -160,7 +160,9 @@ class LoginPage extends StatelessWidget {
               ),
             ),
           ),
-          Image.asset('assets/images/login_splash.png'),
+          Expanded(
+            child: Image.asset('assets/images/login_splash.png'),
+          ),
         ],
       ),
     );

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class TopAppBarContent extends StatelessWidget {
-  const TopAppBarContent({super.key});
+  final bool isLoggedIn;
+  const TopAppBarContent({super.key, this.isLoggedIn = false});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +26,98 @@ class TopAppBarContent extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SvgPicture.asset(
-              logo,
-              height: 40,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(right: 50),
+                  child: SvgPicture.asset(
+                    logo,
+                    height: 40,
+                  ),
+                ),
+                if (isLoggedIn)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        child: Text(
+                          "GIA SƯ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                        ),
+                        onTap: () {},
+                      ),
+                      const SizedBox(
+                        width: 25,
+                      ),
+                      InkWell(
+                        child: Text(
+                          "LỊCH HỌC",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                        ),
+                        onTap: () {},
+                      ),
+                      const SizedBox(
+                        width: 25,
+                      ),
+                      InkWell(
+                        child: Text(
+                          "LỊCH SỬ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                        ),
+                        onTap: () {},
+                      ),
+                      const SizedBox(
+                        width: 25,
+                      ),
+                      InkWell(
+                        child: Text(
+                          "KHÓA HỌC",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                        ),
+                        onTap: () {},
+                      ),
+                      const SizedBox(
+                        width: 25,
+                      ),
+                      InkWell(
+                        child: Text(
+                          "KHÓA HỌC CỦA TÔI",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge!
+                              .copyWith(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                        ),
+                        onTap: () {},
+                      ),
+                      const SizedBox(
+                        width: 25,
+                      ),
+                    ],
+                  )
+              ],
             ),
             Container(
               width: 40,
