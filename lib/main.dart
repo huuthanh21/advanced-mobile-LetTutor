@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lettutor/presentation/courses/courses_page.dart';
+import 'package:lettutor/presentation/course_detail/course_detail_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const CoursesPage(),
+      home: const CourseDetailPage(),
     );
   }
 }
