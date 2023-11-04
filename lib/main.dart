@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lettutor/presentation/course_detail/course_detail_page.dart';
+import 'package:lettutor/core/app_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -43,7 +43,8 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const CourseDetailPage(),
+      routerConfig: router,
+      //home: const CourseDetailPage(),
     );
   }
 }

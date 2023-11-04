@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lettutor/common/widgets/top_app_bar_content.dart';
 
 class LoginPage extends StatelessWidget {
@@ -89,7 +90,7 @@ class LoginPage extends StatelessWidget {
                           style: TextStyle(color: Colors.blue)),
                       onTap: () {}),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () => context.go(context.namedLocation('home')),
                     style: TextButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.symmetric(

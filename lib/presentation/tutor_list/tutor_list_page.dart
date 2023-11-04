@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../common/widgets/top_app_bar_content.dart';
 
@@ -284,11 +285,15 @@ class TutorListPage extends StatelessWidget {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text("Nguyễn Văn A",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleLarge!
-                                                  .copyWith(fontSize: 22)),
+                                          InkWell(
+                                            onTap: () => context.push(
+                                                context.namedLocation("tutor")),
+                                            child: Text("Nguyễn Văn A",
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleLarge!
+                                                    .copyWith(fontSize: 22)),
+                                          ),
                                           Row(children: [
                                             SvgPicture.asset(
                                               "images/vietnam.svg",

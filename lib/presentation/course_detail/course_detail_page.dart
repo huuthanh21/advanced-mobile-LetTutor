@@ -14,7 +14,7 @@ class CourseDetailPage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          margin: const EdgeInsets.fromLTRB(10, 20, 50, 0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -287,7 +287,7 @@ class CourseDetailPage extends StatelessWidget {
                             mainAxisSpacing: 10,
                             crossAxisSpacing: 10,
                             children: [
-                              for (int i = 0; i < 4; i++)
+                              for (int i = 0; i < 9; i++)
                                 Container(
                                   height: 140,
                                   decoration: BoxDecoration(

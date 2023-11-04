@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 
 class TopAppBarContent extends StatelessWidget {
   final bool isLoggedIn;
@@ -31,9 +32,12 @@ class TopAppBarContent extends StatelessWidget {
               children: [
                 Container(
                   margin: const EdgeInsets.only(right: 50),
-                  child: SvgPicture.asset(
-                    logo,
-                    height: 40,
+                  child: InkWell(
+                    onTap: () => context.go(context.namedLocation('home')),
+                    child: SvgPicture.asset(
+                      logo,
+                      height: 40,
+                    ),
                   ),
                 ),
                 if (isLoggedIn)
@@ -41,6 +45,7 @@ class TopAppBarContent extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       InkWell(
+                        onTap: () => context.go(context.namedLocation('home')),
                         child: Text(
                           "GIA SƯ",
                           style: Theme.of(context)
@@ -50,7 +55,6 @@ class TopAppBarContent extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                         ),
-                        onTap: () {},
                       ),
                       const SizedBox(
                         width: 25,
@@ -65,7 +69,8 @@ class TopAppBarContent extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                         ),
-                        onTap: () {},
+                        onTap: () =>
+                            context.go(context.namedLocation('schedule')),
                       ),
                       const SizedBox(
                         width: 25,
@@ -80,23 +85,25 @@ class TopAppBarContent extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.secondary,
                               ),
                         ),
-                        onTap: () {},
+                        onTap: () =>
+                            context.go(context.namedLocation('history')),
                       ),
                       const SizedBox(
                         width: 25,
                       ),
                       InkWell(
-                        child: Text(
-                          "KHÓA HỌC",
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineLarge!
-                              .copyWith(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                        ),
-                        onTap: () {},
-                      ),
+                          child: Text(
+                            "KHÓA HỌC",
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineLarge!
+                                .copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                          ),
+                          onTap: () =>
+                              context.go(context.namedLocation('courses'))),
                       const SizedBox(
                         width: 25,
                       ),
