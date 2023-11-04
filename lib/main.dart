@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lettutor/presentation/schedule/schedule.dart';
+import 'package:lettutor/presentation/history/history_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const SchedulePage(),
+      home: const HistoryPage(),
     );
   }
 }

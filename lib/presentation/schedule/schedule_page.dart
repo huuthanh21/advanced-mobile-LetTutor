@@ -33,7 +33,7 @@ class SchedulePage extends StatelessWidget {
                       children: [
                         // Text
                         Text(
-                          'Schedule',
+                          'Lịch học',
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 40,
