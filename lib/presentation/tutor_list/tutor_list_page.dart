@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lettutor/common/widgets/footer.dart';
 
 import '../../common/widgets/top_app_bar_content.dart';
 
@@ -460,7 +461,8 @@ class TutorListPage extends StatelessWidget {
                   )
                 ],
               ),
-            )
+            ),
+            const Footer(),
           ],
         ),
       ),
