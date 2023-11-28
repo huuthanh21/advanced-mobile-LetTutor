@@ -47,7 +47,7 @@ class TutorDetailPage extends StatelessWidget {
                                           .copyWith(fontSize: 22)),
                                   Row(children: [
                                     SvgPicture.asset(
-                                      "images/vietnam.svg",
+                                      "assets/images/vietnam.svg",
                                       height: 20,
                                       width: 20,
                                     ),

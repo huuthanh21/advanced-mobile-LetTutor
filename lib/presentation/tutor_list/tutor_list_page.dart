@@ -297,7 +297,7 @@ class TutorListPage extends StatelessWidget {
                                           ),
                                           Row(children: [
                                             SvgPicture.asset(
-                                              "images/vietnam.svg",
+                                              "assets/images/vietnam.svg",
                                               height: 20,
                                               width: 20,
                                             ),

@@ -8,8 +8,8 @@ class TopAppBarContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String logo = "images/lettutor_logo.svg";
-    const String vietnam = "images/vietnam.svg";
+    const String logo = "assets/images/lettutor_logo.svg";
+    const String vietnam = "assets/images/vietnam.svg";
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

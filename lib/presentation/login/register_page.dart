@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lettutor/common/widgets/top_app_bar.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/widgets/footer.dart';
-import '../../common/widgets/top_app_bar.dart';
 import '../../core/providers/login_provider.dart';
+import '../../models/user.dart';
 import 'components/InputField.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class RegisterPage extends StatelessWidget {
+  RegisterPage({super.key});
 
   final _emailFieldController = TextEditingController();
   final _passwordFieldController = TextEditingController();
@@ -35,7 +36,7 @@ class LoginPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Đăng nhập",
+                        Text("Đăng ký",
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
@@ -97,12 +98,8 @@ class LoginPage extends StatelessWidget {
                             ],
                           ),
                         ),
-                        InkWell(
-                            child: const Text("Quên mật khẩu?",
-                                style: TextStyle(color: Colors.blue)),
-                            onTap: () {}),
                         TextButton(
-                          onPressed: () => login(context),
+                          onPressed: () => register(context),
                           style: TextButton.styleFrom(
                             backgroundColor:
                                 Theme.of(context).colorScheme.primary,
@@ -113,7 +110,7 @@ class LoginPage extends StatelessWidget {
                             ),
                           ),
                           child: const Center(
-                              child: Text("ĐĂNG NHẬP",
+                              child: Text("ĐĂNG KÝ",
                                   style: TextStyle(
                                       fontSize: 22, color: Colors.white))),
                         ),
@@ -165,12 +162,13 @@ class LoginPage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text("Chưa có tài khoản?"),
+                            const Text("Đã có tài khoản?"),
                             InkWell(
-                                child: const Text("Đăng ký",
-                                    style: TextStyle(color: Colors.blue)),
-                                onTap: () => context
-                                    .go(context.namedLocation('register')))
+                              child: const Text("Đăng nhập ngay",
+                                  style: TextStyle(color: Colors.blue)),
+                              onTap: () =>
+                                  context.go(context.namedLocation('login')),
+                            )
                           ],
                         )
                       ],
@@ -195,12 +193,18 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  void login(BuildContext context) {
+  void register(BuildContext context) {
     final loginProvider = context.read<LoginProvider>();
-    loginProvider.login(
-        _emailFieldController.text, _passwordFieldController.text);
-    if (loginProvider.isLoggedIn) {
-      context.go(context.namedLocation('home'));
+    bool isRegistered = loginProvider.register(User(
+        email: _emailFieldController.text,
+        password: _passwordFieldController.text));
+    if (isRegistered) {
+      // Clear the text fields
+      _emailFieldController.clear();
+      _passwordFieldController.clear();
+      // Navigate to the login page
+      context.go(context.namedLocation('login'));
     }
+    return;
   }
 }

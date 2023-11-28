@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_svg: ^2.0.9
   go_router: ^12.1.0
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +72,8 @@ flutter:
   assets:
     - assets/images/
     - assets/images/login_splash.png
+    - assets/images/lettutor_logo.svg
+    - assets/images/vietnam.svg
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
