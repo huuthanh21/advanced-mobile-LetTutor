@@ -1,8 +1,13 @@
 import '../../models/tutor.dart';
 
 class TutorDataProvider {
-  Future<List<Tutor>> getTutors() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return List.generate(10, (index) => Tutor.getRandomTutor());
+  final List<Tutor> _tutors = [];
+
+  List<Tutor> get tutors => _tutors;
+
+  TutorDataProvider() {
+    List.generate(10, (index) {
+      _tutors.add(Tutor.getRandomTutor());
+    });
   }
 }
