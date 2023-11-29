@@ -14,11 +14,11 @@ final GoRouter router = GoRouter(
         // REDIRECT TO BE IMPLEMENTED
         path: '/',
         name: "login",
-        builder: (context, state) => LoginPage()),
+        builder: (context, state) => const LoginPage()),
     GoRoute(
         path: '/register',
         name: "register",
-        builder: (context, state) => RegisterPage()),
+        builder: (context, state) => const RegisterPage()),
     GoRoute(
       path: '/home',
       name: "home",

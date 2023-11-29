@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:passwordfield/passwordfield.dart';
 
-class InputField extends StatelessWidget {
-  const InputField({
+class PasswordInputField extends StatelessWidget {
+  const PasswordInputField({
     super.key,
     required TextEditingController controller,
     String? hintText,
@@ -13,12 +14,14 @@ class InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return PasswordField(
       controller: _controller,
-      decoration: InputDecoration(
-        hintText: _hintText,
+      passwordConstraint: r'^.{6,}$',
+      hintText: _hintText,
+      border: PasswordBorder(
         border: const OutlineInputBorder(),
       ),
+      errorMessage: 'Mật khẩu phải có ít nhất 6 ký tự',
     );
   }
 }

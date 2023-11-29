@@ -1,6 +1,7 @@
 import '../../models/user.dart';
 
 class LoginProvider {
+  // ignore: unused_field
   User? _user;
   final List<User> _users = [
     User(email: "teacher@lettutor.com", password: "123456"),
@@ -12,15 +13,16 @@ class LoginProvider {
 
   bool get isLoggedIn => _isLoggedIn;
 
-  void login(String email, String password) {
-    if (_isLoggedIn) return;
+  bool login(String email, String password) {
+    if (_isLoggedIn) return false;
     for (var user in _users) {
       if (user.email == email && user.password == password) {
         _user = user;
         _isLoggedIn = true;
-        return;
+        return true;
       }
     }
+    return false;
   }
 
   bool register(User newUser) {
