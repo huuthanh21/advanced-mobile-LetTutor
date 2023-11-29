@@ -6,7 +6,7 @@ class LoginProvider {
   final List<User> _users = [
     User(email: "teacher@lettutor.com", password: "123456"),
     User(email: "student@lettutor.com", password: "123456"),
-    User(email: "admin", password: "123456")
+    User(email: "admin@mail.com", password: "123456")
   ];
 
   bool _isLoggedIn = false;
