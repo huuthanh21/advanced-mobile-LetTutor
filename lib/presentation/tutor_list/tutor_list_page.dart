@@ -1,20 +1,23 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lettutor/common/widgets/footer.dart';
+import 'package:provider/provider.dart';
 
-import '../../common/widgets/top_app_bar_content.dart';
+import '../../common/providers/data_provider.dart';
+import '../../common/utils/country_mapper.dart';
+import '../../common/widgets/footer.dart';
+import '../../common/widgets/top_app_bar.dart';
+import '../../models/tutor.dart';
 
 class TutorListPage extends StatelessWidget {
   const TutorListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final tutorDataProvider = Provider.of<TutorDataProvider>(context);
+
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: TopAppBarContent(isLoggedIn: true),
-      ),
+      appBar: TopAppBar(isLoggedIn: true),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -255,208 +258,8 @@ class TutorListPage extends StatelessWidget {
                     crossAxisSpacing: 10,
                     shrinkWrap: true,
                     children: [
-                      for (int i = 0; i < 10; i++)
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                            border: Border.all(
-                              color: Colors.grey.withOpacity(0.2),
-                            ),
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: Icon(Icons.person)),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          InkWell(
-                                            onTap: () => context.push(
-                                                context.namedLocation("tutor")),
-                                            child: Text("Nguyễn Văn A",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleLarge!
-                                                    .copyWith(fontSize: 22)),
-                                          ),
-                                          Row(children: [
-                                            SvgPicture.asset(
-                                              "assets/images/vietnam.svg",
-                                              height: 20,
-                                              width: 20,
-                                            ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              "Việt Nam",
-                                              style: TextStyle(
-                                                  color: Colors.grey.shade600),
-                                            ),
-                                          ]),
-                                          const Row(
-                                            children: [
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.orange,
-                                                size: 15,
-                                              ),
-                                              SizedBox(
-                                                width: 3,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.orange,
-                                                size: 15,
-                                              ),
-                                              SizedBox(
-                                                width: 3,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.orange,
-                                                size: 15,
-                                              ),
-                                              SizedBox(
-                                                width: 3,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.orange,
-                                                size: 15,
-                                              ),
-                                              SizedBox(
-                                                width: 3,
-                                              ),
-                                              Icon(
-                                                Icons.star,
-                                                color: Colors.orange,
-                                                size: 15,
-                                              ),
-                                            ],
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ), // Header left
-                                  IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                          Icons.favorite_border_outlined))
-                                ],
-                              ), // Header
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Wrap(
-                                direction: Axis.horizontal,
-                                spacing: 10,
-                                children: [
-                                  TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      backgroundColor:
-                                          Colors.grey.withOpacity(0.2),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                    child: Text("Tất cả",
-                                        style: TextStyle(
-                                            color: Colors.grey.shade800)),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      backgroundColor:
-                                          Colors.grey.withOpacity(0.2),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                    child: Text("ABC",
-                                        style: TextStyle(
-                                            color: Colors.grey.shade800)),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      backgroundColor:
-                                          Colors.grey.withOpacity(0.2),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                    child: Text("CDE",
-                                        style: TextStyle(
-                                            color: Colors.grey.shade800)),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      backgroundColor:
-                                          Colors.grey.withOpacity(0.2),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                    child: Text("FGH",
-                                        style: TextStyle(
-                                            color: Colors.grey.shade800)),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "I am passionate about running and fitness, I often compete in trail/mountain running events and I love pushing myself. I am training to one day take part in ultra-endurance events. I also enjoy watching rugby on the weekends, reading and watching podcasts on Youtube. My most memorable life experience would be living in and traveling around Southeast Asia.",
-                                style: TextStyle(
-                                    color: Colors.grey.shade600, fontSize: 16),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: TextButton.icon(
-                                    onPressed: () {},
-                                    style: TextButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      side: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        width: 1,
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 30, vertical: 10),
-                                    ),
-                                    icon: const Icon(
-                                        Icons.calendar_month_outlined),
-                                    label: const Text("Đặt lịch")),
-                              )
-                            ],
-                          ),
-                        )
+                      for (Tutor tutor in tutorDataProvider.tutors)
+                        TutorCard(tutor: tutor),
                     ],
                   )
                 ],
@@ -465,6 +268,148 @@ class TutorListPage extends StatelessWidget {
             const Footer(),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class TutorCard extends StatelessWidget {
+  const TutorCard({
+    super.key,
+    required this.tutor,
+  });
+
+  final Tutor tutor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.2),
+        ),
+      ),
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: Image.network(tutor.profilePictureUrl),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () => context.push(
+                            // TODO: Navigate to tutor detail page
+                            context.namedLocation("tutor")),
+                        child: Text(tutor.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(fontSize: 22)),
+                      ),
+                      Row(children: [
+                        CountryFlag.fromCountryCode(tutor.countryCode,
+                            width: 20, height: 20),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          CountryMapper.countryCodeToName(tutor.countryCode),
+                          style: TextStyle(color: Colors.grey.shade600),
+                        ),
+                      ]),
+                      Row(
+                        // TODO: Display star rating from reviews
+                        children: [
+                          for (int i = 0; i < 5; i++)
+                            const Padding(
+                              padding: EdgeInsets.only(right: 3.0),
+                              child: Icon(
+                                Icons.star,
+                                color: Colors.orange,
+                                size: 15,
+                              ),
+                            ),
+                        ],
+                      )
+                    ],
+                  )
+                ],
+              ), // Header left
+              IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.favorite_border_outlined))
+            ],
+          ), // Header
+          const SizedBox(
+            height: 10,
+          ),
+          Wrap(
+            direction: Axis.horizontal,
+            spacing: 10,
+            runSpacing: 3,
+            children: [
+              for (String specialization in tutor.specializations)
+                TextButton(
+                  onPressed: null,
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.grey.withOpacity(0.2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: Text(specialization,
+                      style: TextStyle(color: Colors.grey.shade800)),
+                ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            tutor.description,
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+                onPressed: () {},
+                style: TextButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 1,
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                ),
+                icon: const Icon(Icons.calendar_month_outlined),
+                label: const Text("Đặt lịch")),
+          )
+        ],
       ),
     );
   }

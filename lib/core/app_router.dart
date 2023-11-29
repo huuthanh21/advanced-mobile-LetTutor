@@ -1,12 +1,15 @@
 import 'package:go_router/go_router.dart';
-import 'package:lettutor/presentation/course_detail/course_detail_page.dart';
-import 'package:lettutor/presentation/courses/courses_page.dart';
-import 'package:lettutor/presentation/history/history_page.dart';
-import 'package:lettutor/presentation/login/login_page.dart';
-import 'package:lettutor/presentation/login/register_page.dart';
-import 'package:lettutor/presentation/schedule/schedule_page.dart';
-import 'package:lettutor/presentation/tutor_detail/tutor_detail_page.dart';
-import 'package:lettutor/presentation/tutor_list/tutor_list_page.dart';
+import 'package:provider/provider.dart';
+
+import '../common/providers/data_provider.dart';
+import '../presentation/course_detail/course_detail_page.dart';
+import '../presentation/courses/courses_page.dart';
+import '../presentation/history/history_page.dart';
+import '../presentation/login/login_page.dart';
+import '../presentation/login/register_page.dart';
+import '../presentation/schedule/schedule_page.dart';
+import '../presentation/tutor_detail/tutor_detail_page.dart';
+import '../presentation/tutor_list/tutor_list_page.dart';
 
 final GoRouter router = GoRouter(
   routes: [
@@ -22,7 +25,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/home',
       name: "home",
-      builder: (context, state) => const TutorListPage(),
+      builder: (context, state) => Provider(
+        create: (context) => TutorDataProvider(),
+        child: const TutorListPage(),
+      ),
       routes: [
         GoRoute(
           path: 'tutor',

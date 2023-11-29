@@ -4,7 +4,7 @@ import 'user.dart';
 
 class Tutor {
   final String name;
-  final String profilePictureUrl = "https://picsum.photos/200";
+  final String profilePictureUrl;
   // final String videoUrl = "https://www.youtube.com/watch?v=7oKjW1OIjuw";
   final String description;
   final String countryCode;
@@ -24,6 +24,7 @@ class Tutor {
     required this.education,
     required this.hobbies,
     required this.experience,
+    this.profilePictureUrl = "https://picsum.photos/seed/20120582/200",
   });
 
   static List<String> specializationList = [
@@ -43,8 +44,31 @@ class Tutor {
   static Tutor getRandomTutor() {
     Tutor tutor = Tutor(
       name: faker.person.name(),
-      description: faker.lorem.sentences(2).join(" "),
-      countryCode: faker.randomGenerator.element(["vn", "us", "jp", "kr"]),
+      profilePictureUrl:
+          "https://picsum.photos/seed/${faker.randomGenerator.integer(100)}/200",
+      description: faker.lorem.sentences(5).join(" "),
+      countryCode: faker.randomGenerator.element([
+        "VN",
+        "US",
+        "CN",
+        "IN",
+        "ID",
+        "PK",
+        "BR",
+        "NG",
+        "BD",
+        "RU",
+        "JP",
+        "MX",
+        "PH",
+        "ET",
+        "EG",
+        "DE",
+        "IR",
+        "TR",
+        "CD",
+        "FR"
+      ]),
       education: faker.lorem.words(3).join(" "),
       hobbies: faker.lorem.sentence(),
       experience: faker.lorem.sentence(),
