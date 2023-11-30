@@ -303,8 +303,10 @@ class TutorCard extends StatelessWidget {
             fit: FlexFit.tight,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
                       width: 40,
@@ -315,9 +317,10 @@ class TutorCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(
-                      width: 10,
+                      width: 20,
                     ),
                     Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         InkWell(
