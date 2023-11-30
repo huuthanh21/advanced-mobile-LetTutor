@@ -343,8 +343,9 @@ class TutorCard extends StatelessWidget {
                           style: TextStyle(
                               color: Colors.grey.shade600,
                               fontStyle: FontStyle.italic),
-                        ),
-                      RatingBar(rating: tutor.rating),
+                        )
+                      else
+                        RatingBar(rating: tutor.rating),
                     ],
                   )
                 ],
