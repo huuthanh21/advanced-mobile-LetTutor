@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../common/providers/data_provider.dart';
 import '../../common/utils/country_mapper.dart';
 import '../../common/widgets/footer.dart';
+import '../../common/widgets/rating_bar.dart';
 import '../../common/widgets/top_app_bar.dart';
 import '../../models/tutor.dart';
 
@@ -336,20 +337,14 @@ class TutorCard extends StatelessWidget {
                           style: TextStyle(color: Colors.grey.shade600),
                         ),
                       ]),
-                      Row(
-                        // TODO: Display star rating from reviews
-                        children: [
-                          for (int i = 0; i < 5; i++)
-                            const Padding(
-                              padding: EdgeInsets.only(right: 3.0),
-                              child: Icon(
-                                Icons.star,
-                                color: Colors.orange,
-                                size: 15,
-                              ),
-                            ),
-                        ],
-                      )
+                      if (tutor.reviews.isEmpty)
+                        Text(
+                          "Không có đánh giá",
+                          style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontStyle: FontStyle.italic),
+                        ),
+                      RatingBar(rating: tutor.rating),
                     ],
                   )
                 ],

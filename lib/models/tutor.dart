@@ -103,7 +103,7 @@ class Tutor {
       tutor.courses.add(randomCourse);
     }
     // Add random reviews
-    for (var i = 0; i < faker.randomGenerator.integer(6, min: 1); i++) {
+    for (var i = 0; i < faker.randomGenerator.integer(6, min: 0); i++) {
       Review randomReview = Review(
           author: User.getRandomUser(),
           content: faker.lorem.sentences(2).join(" "),
@@ -112,6 +112,17 @@ class Tutor {
       tutor.reviews.add(randomReview);
     }
     return tutor;
+  }
+
+  int get rating {
+    if (reviews.isEmpty) {
+      return 0;
+    }
+    int sum = 0;
+    for (var review in reviews) {
+      sum += review.rating;
+    }
+    return sum ~/ reviews.length;
   }
 }
 
