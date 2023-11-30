@@ -16,13 +16,13 @@ class RatingBar extends StatelessWidget {
           Icon(
             Icons.star,
             color: Colors.yellow,
-            size: _size ?? 20,
+            size: _size,
           ),
         for (int i = 0; i < 5 - _rating; i++)
           Icon(
             Icons.star,
             color: Colors.grey.shade200,
-            size: _size ?? 20,
+            size: _size,
           ),
       ],
     );
