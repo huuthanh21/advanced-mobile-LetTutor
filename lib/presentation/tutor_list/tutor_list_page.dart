@@ -1,4 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/providers/data_provider.dart';
@@ -21,11 +24,19 @@ class _TutorListPageState extends State<TutorListPage> {
   final _tutorNameController = TextEditingController();
   final _focusNode = FocusNode();
 
+  final List<String> _tutorCountryFilters = [
+    "Gia sư Nước Ngoài",
+    "Gia sư Việt Nam",
+    "Gia sư Tiếng Anh bản ngữ"
+  ];
+  late List<String> _selectedTutorCountryFilters;
+
   @override
   void initState() {
     super.initState();
     _tutorDataProvider = Provider.of<TutorDataProvider>(context, listen: false);
     _displayedTutors = _tutorDataProvider.tutors;
+    _selectedTutorCountryFilters = [];
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
         setState(() => _displayedTutors = getFilteredTutors());
@@ -122,7 +133,7 @@ class _TutorListPageState extends State<TutorListPage> {
                           },
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10,
+                              horizontal: 15,
                               vertical: 5,
                             ),
                             hintText: "Nhập tên gia sư...",
@@ -133,20 +144,36 @@ class _TutorListPageState extends State<TutorListPage> {
                         ),
                       ),
                       SizedBox(
-                        width: 300,
-                        height: 40,
-                        child: TextField(
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            hintText: "Chọn quốc gia gia sư",
-                            suffixIcon: const Icon(Icons.arrow_drop_down),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
+                        width: 500,
+                        child: MultiSelectDialogField(
+                          title: const Text("Chọn quốc gia gia sư"),
+                          buttonText: const Text(
+                            "Chọn quốc gia gia sư",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          dialogHeight: 250,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.grey.shade400,
+                              width: 1,
                             ),
                           ),
+                          cancelText: const Text("HỦY"),
+                          items: _tutorCountryFilters
+                              .mapIndexed((index, value) => MultiSelectItem(
+                                    index,
+                                    value,
+                                  ))
+                              .toList(),
+                          onConfirm: (values) {
+                            setState(() {
+                              _selectedTutorCountryFilters = values
+                                  .map((e) => _tutorCountryFilters[e])
+                                  .toList();
+                              _displayedTutors = getFilteredTutors();
+                            });
+                          },
                         ),
                       ),
                     ],
@@ -165,7 +192,7 @@ class _TutorListPageState extends State<TutorListPage> {
                         child: TextField(
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10,
+                              horizontal: 15,
                               vertical: 5,
                             ),
                             hintText: "Chọn một ngày",
@@ -190,7 +217,7 @@ class _TutorListPageState extends State<TutorListPage> {
                         child: TextField(
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10,
+                              horizontal: 15,
                               vertical: 5,
                             ),
                             hintText: "Giờ bắt đầu - Giờ kết thúc",
@@ -310,11 +337,47 @@ class _TutorListPageState extends State<TutorListPage> {
   }
 
   List<Tutor> getFilteredTutors() {
-    return _tutorDataProvider.tutors
+    List<Tutor> filteredTutors = _tutorDataProvider.tutors
         .where((tutor) => tutor.name
             .toLowerCase()
             .contains(_tutorNameController.text.toLowerCase()))
         .toList();
+    if (_selectedTutorCountryFilters.length == 2) {
+      // VN && bản ngữ
+      if (_selectedTutorCountryFilters.contains("Gia sư Việt Nam") &&
+          _selectedTutorCountryFilters.contains("Gia sư Tiếng Anh bản ngữ")) {
+        filteredTutors = filteredTutors
+            .where(
+                (tutor) => !tutor.isForeigner || tutor.isNativeEnglishSpeaker)
+            .toList();
+      } else // Nước ngoài && bản ngữ
+      if (_selectedTutorCountryFilters.contains("Gia sư Nước Ngoài") &&
+          _selectedTutorCountryFilters.contains("Gia sư Tiếng Anh bản ngữ")) {
+        filteredTutors = filteredTutors
+            .where((tutor) => tutor.isForeigner == false)
+            .toList();
+      }
+    }
+
+    if (_selectedTutorCountryFilters.length == 1) {
+      // VN
+      if (_selectedTutorCountryFilters.contains("Gia sư Việt Nam")) {
+        filteredTutors = filteredTutors
+            .where((tutor) => tutor.isForeigner == false)
+            .toList();
+      } else // Nước ngoài
+      if (_selectedTutorCountryFilters.contains("Gia sư Nước Ngoài")) {
+        filteredTutors =
+            filteredTutors.where((tutor) => tutor.isForeigner).toList();
+      } else // bản ngữ
+      if (_selectedTutorCountryFilters.contains("Gia sư Tiếng Anh bản ngữ")) {
+        filteredTutors = filteredTutors
+            .where((tutor) => tutor.isNativeEnglishSpeaker)
+            .toList();
+      }
+    }
+
+    return filteredTutors;
   }
 
   @override

@@ -124,6 +124,30 @@ class Tutor {
     }
     return sum ~/ reviews.length;
   }
+
+  bool get isForeigner => countryCode != "VN";
+
+  bool get isNativeEnglishSpeaker => [
+        "AG",
+        "AU",
+        "BS",
+        "BB",
+        "BZ",
+        "CA",
+        "DM",
+        "GD",
+        "GY",
+        "IE",
+        "JM",
+        "MT",
+        "NZ",
+        "KN",
+        "LC",
+        "VC",
+        "TT",
+        "GB",
+        "US"
+      ].contains(countryCode);
 }
 
 class Schedule {
