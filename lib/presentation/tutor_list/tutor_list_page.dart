@@ -7,13 +7,34 @@ import '../../common/widgets/top_app_bar.dart';
 import '../../models/tutor.dart';
 import 'components/tutor_card.dart';
 
-class TutorListPage extends StatelessWidget {
+class TutorListPage extends StatefulWidget {
   const TutorListPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final tutorDataProvider = Provider.of<TutorDataProvider>(context);
+  State<TutorListPage> createState() => _TutorListPageState();
+}
 
+class _TutorListPageState extends State<TutorListPage> {
+  late TutorDataProvider _tutorDataProvider;
+  late List<Tutor> _displayedTutors;
+
+  final _tutorNameController = TextEditingController();
+  final _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _tutorDataProvider = Provider.of<TutorDataProvider>(context, listen: false);
+    _displayedTutors = _tutorDataProvider.tutors;
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        setState(() => _displayedTutors = getFilteredTutors());
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: TopAppBar(isLoggedIn: true),
       body: SingleChildScrollView(
@@ -92,12 +113,19 @@ class TutorListPage extends StatelessWidget {
                         width: 200,
                         height: 40,
                         child: TextField(
+                          controller: _tutorNameController,
+                          focusNode: _focusNode,
+                          onEditingComplete: () {
+                            setState(() {
+                              _displayedTutors = getFilteredTutors();
+                            });
+                          },
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 10,
                               vertical: 5,
                             ),
-                            hintText: "Nhập tên gia sư",
+                            hintText: "Nhập tên gia sư...",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -132,7 +160,7 @@ class TutorListPage extends StatelessWidget {
                     spacing: 10,
                     children: [
                       SizedBox(
-                        width: 200,
+                        width: 170,
                         height: 40,
                         child: TextField(
                           decoration: InputDecoration(
@@ -140,9 +168,18 @@ class TutorListPage extends StatelessWidget {
                               horizontal: 10,
                               vertical: 5,
                             ),
-                            hintText: "Nhập tên gia sư",
+                            hintText: "Chọn một ngày",
+                            suffixIcon: Icon(
+                              Icons.calendar_today_outlined,
+                              color: Colors.grey.shade400,
+                              size: 16,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
+                              borderSide: const BorderSide(
+                                color: Colors.grey,
+                                width: 1,
+                              ),
                             ),
                           ),
                         ),
@@ -156,7 +193,7 @@ class TutorListPage extends StatelessWidget {
                               horizontal: 10,
                               vertical: 5,
                             ),
-                            hintText: "Chọn quốc gia gia sư",
+                            hintText: "Giờ bắt đầu - Giờ kết thúc",
                             suffixIcon: const Icon(Icons.arrow_drop_down),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -248,16 +285,19 @@ class TutorListPage extends StatelessWidget {
                   const SizedBox(
                     height: 10,
                   ),
-                  GridView.count(
-                    crossAxisCount: 3,
+                  GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
                     scrollDirection: Axis.vertical,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
                     shrinkWrap: true,
-                    children: [
-                      for (Tutor tutor in tutorDataProvider.tutors)
-                        TutorCard(tutor: tutor),
-                    ],
+                    itemCount: _displayedTutors.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return TutorCard(tutor: _displayedTutors[index]);
+                    },
                   )
                 ],
               ),
@@ -267,5 +307,20 @@ class TutorListPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<Tutor> getFilteredTutors() {
+    return _tutorDataProvider.tutors
+        .where((tutor) => tutor.name
+            .toLowerCase()
+            .contains(_tutorNameController.text.toLowerCase()))
+        .toList();
+  }
+
+  @override
+  void dispose() {
+    _tutorNameController.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 }
