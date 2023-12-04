@@ -55,18 +55,20 @@ class _TutorListPageState extends State<TutorListPage> {
     });
   }
 
-  void _showDatePicker() {
-    showDatePicker(
+  Future<void> _showDatePicker() async {
+    final now = DateTime.now();
+    final value = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 30)),
-    ).then(
-      (value) => setState(() {
-        _selectedDate = value;
-        _dateController.text = DateFormat("dd/MM/yyyy").format(value!);
-      }),
+      initialDate: now,
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 30)),
     );
+    if (value != null) {
+      setState(() {
+        _selectedDate = value;
+        _dateController.text = DateFormat.yMd().format(value);
+      });
+    }
   }
 
   @override
@@ -350,34 +352,70 @@ class _TutorListPageState extends State<TutorListPage> {
       _selectedTutorCountryFilters.clear();
       _tutorNameController.clear();
       _selectedTutorSpecializationFilter = 0;
-      _displayedTutors = getFilteredTutors();
+      _displayedTutors = _tutorDataProvider.tutors;
     });
   }
 
   List<Tutor> getFilteredTutors() {
-    String lowerCaseName = _tutorNameController.text.toLowerCase();
-    bool isVN = _selectedTutorCountryFilters.contains(1);
-    bool isForeign = _selectedTutorCountryFilters.contains(0);
-    bool isNative = _selectedTutorCountryFilters.contains(2);
+    String searchText = _tutorNameController.text.toLowerCase();
+    List<Tutor> filteredTutors = _tutorDataProvider.tutors
+        .where((tutor) => tutor.name.toLowerCase().contains(searchText))
+        .toList();
+
+    bool foreignFilter = _selectedTutorCountryFilters.contains(0);
+    bool vietnameseFilter = _selectedTutorCountryFilters.contains(1);
+    bool nativeSpeakerFilter = _selectedTutorCountryFilters.contains(2);
+
+    // If two filters are selected, there are 3 cases:
+    // 1. Vietnamese and foreigner filters are selected: every tutor is shown since they are either Vietnamese or foreigner
+    // 2. Vietnamese and native speaker filters are selected: show Vietnamese and native speakers
+    // 3. Foreigner and native speaker filters are selected: show foreigner tutors since native speakers are already included
+    if (_selectedTutorCountryFilters.length == 2) {
+      if (vietnameseFilter && nativeSpeakerFilter) {
+        filteredTutors = filteredTutors
+            .where(
+                (tutor) => !tutor.isForeigner || tutor.isNativeEnglishSpeaker)
+            .toList();
+      } else if (foreignFilter && nativeSpeakerFilter) {
+        filteredTutors =
+            filteredTutors.where((tutor) => !tutor.isForeigner).toList();
+      }
+    }
+
+    // If one filter is selected, there are 3 cases:
+    // 1. Vietnamese filter is selected: show Vietnamese tutors
+    // 2. Foreigner filter is selected: show foreigner tutors
+    // 3. Native speaker filter is selected: show native speakers
+    if (_selectedTutorCountryFilters.length == 1) {
+      if (vietnameseFilter) {
+        filteredTutors =
+            filteredTutors.where((tutor) => !tutor.isForeigner).toList();
+      } else if (foreignFilter) {
+        filteredTutors =
+            filteredTutors.where((tutor) => tutor.isForeigner).toList();
+      } else if (nativeSpeakerFilter) {
+        filteredTutors = filteredTutors
+            .where((tutor) => tutor.isNativeEnglishSpeaker)
+            .toList();
+      }
+    }
+
     String selectedSpecialization =
         _tutorSpecializationFilters[_selectedTutorSpecializationFilter];
-
-    return _tutorDataProvider.tutors
-        .where((tutor) =>
-            tutor.name.toLowerCase().contains(lowerCaseName) &&
-            ((isVN && !tutor.isForeigner) ||
-                (isForeign && tutor.isForeigner) ||
-                (isNative && tutor.isNativeEnglishSpeaker)) &&
-            (_selectedTutorSpecializationFilter == 0
-                ? true
-                : tutor.specializations.contains(selectedSpecialization)))
-        .toList();
+    if (_selectedTutorSpecializationFilter != 0) {
+      filteredTutors = filteredTutors
+          .where(
+              (tutor) => tutor.specializations.contains(selectedSpecialization))
+          .toList();
+    }
+    return filteredTutors;
   }
 
   @override
   void dispose() {
     _tutorNameController.dispose();
     _focusNode.dispose();
+    _dateController.dispose();
     super.dispose();
   }
 }
