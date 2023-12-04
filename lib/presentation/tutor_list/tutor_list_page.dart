@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,9 @@ class _TutorListPageState extends State<TutorListPage> {
   ];
   int _selectedTutorSpecializationFilter = 0;
 
+  DateTime? _selectedDate;
+  final _dateController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +53,20 @@ class _TutorListPageState extends State<TutorListPage> {
         setState(() => _displayedTutors = getFilteredTutors());
       }
     });
+  }
+
+  void _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 30)),
+    ).then(
+      (value) => setState(() {
+        _selectedDate = value;
+        _dateController.text = DateFormat("dd/MM/yyyy").format(value!);
+      }),
+    );
   }
 
   @override
@@ -197,6 +215,7 @@ class _TutorListPageState extends State<TutorListPage> {
                         width: 170,
                         height: 40,
                         child: TextField(
+                          controller: _dateController,
                           decoration: InputDecoration(
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 15,
@@ -216,6 +235,7 @@ class _TutorListPageState extends State<TutorListPage> {
                               ),
                             ),
                           ),
+                          onTap: _showDatePicker,
                         ),
                       ),
                       SizedBox(
@@ -268,14 +288,7 @@ class _TutorListPageState extends State<TutorListPage> {
                     height: 10,
                   ),
                   TextButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedTutorCountryFilters.clear();
-                        _tutorNameController.clear();
-                        _selectedTutorSpecializationFilter = 0;
-                        _displayedTutors = getFilteredTutors();
-                      });
-                    },
+                    onPressed: () => resetFilters(),
                     style: TextButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -313,7 +326,15 @@ class _TutorListPageState extends State<TutorListPage> {
                     itemBuilder: (BuildContext context, int index) {
                       return TutorCard(tutor: _displayedTutors[index]);
                     },
-                  )
+                  ),
+                  if (_displayedTutors.isEmpty)
+                    const SizedBox(
+                      height: 200,
+                      child: Center(
+                        child: Text(
+                            "Xin lỗi, chúng tôi không thể tìm thấy kết quả vớI từ khoá này"),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -324,57 +345,33 @@ class _TutorListPageState extends State<TutorListPage> {
     );
   }
 
+  void resetFilters() {
+    setState(() {
+      _selectedTutorCountryFilters.clear();
+      _tutorNameController.clear();
+      _selectedTutorSpecializationFilter = 0;
+      _displayedTutors = getFilteredTutors();
+    });
+  }
+
   List<Tutor> getFilteredTutors() {
-    // By name
-    List<Tutor> filteredTutors = _tutorDataProvider.tutors
-        .where((tutor) => tutor.name
-            .toLowerCase()
-            .contains(_tutorNameController.text.toLowerCase()))
+    String lowerCaseName = _tutorNameController.text.toLowerCase();
+    bool isVN = _selectedTutorCountryFilters.contains(1);
+    bool isForeign = _selectedTutorCountryFilters.contains(0);
+    bool isNative = _selectedTutorCountryFilters.contains(2);
+    String selectedSpecialization =
+        _tutorSpecializationFilters[_selectedTutorSpecializationFilter];
+
+    return _tutorDataProvider.tutors
+        .where((tutor) =>
+            tutor.name.toLowerCase().contains(lowerCaseName) &&
+            ((isVN && !tutor.isForeigner) ||
+                (isForeign && tutor.isForeigner) ||
+                (isNative && tutor.isNativeEnglishSpeaker)) &&
+            (_selectedTutorSpecializationFilter == 0
+                ? true
+                : tutor.specializations.contains(selectedSpecialization)))
         .toList();
-
-    // By nationality
-    if (_selectedTutorCountryFilters.length == 2) {
-      // VN && bản ngữ
-      if (_selectedTutorCountryFilters.contains(1) &&
-          _selectedTutorCountryFilters.contains(2)) {
-        filteredTutors = filteredTutors
-            .where(
-                (tutor) => !tutor.isForeigner || tutor.isNativeEnglishSpeaker)
-            .toList();
-      } else // Nước ngoài && bản ngữ
-      if (_selectedTutorCountryFilters.contains(0) &&
-          _selectedTutorCountryFilters.contains(2)) {
-        filteredTutors = filteredTutors
-            .where((tutor) => tutor.isForeigner == false)
-            .toList();
-      }
-    }
-    if (_selectedTutorCountryFilters.length == 1) {
-      // VN
-      if (_selectedTutorCountryFilters.contains(1)) {
-        filteredTutors = filteredTutors
-            .where((tutor) => tutor.isForeigner == false)
-            .toList();
-      } else // Nước ngoài
-      if (_selectedTutorCountryFilters.contains(0)) {
-        filteredTutors =
-            filteredTutors.where((tutor) => tutor.isForeigner).toList();
-      } else // bản ngữ
-      if (_selectedTutorCountryFilters.contains(2)) {
-        filteredTutors = filteredTutors
-            .where((tutor) => tutor.isNativeEnglishSpeaker)
-            .toList();
-      }
-    }
-
-    // By specialization
-    if (_selectedTutorSpecializationFilter != 0) {
-      filteredTutors = filteredTutors
-          .where((tutor) => tutor.specializations.contains(
-              _tutorSpecializationFilters[_selectedTutorSpecializationFilter]))
-          .toList();
-    }
-    return filteredTutors;
   }
 
   @override
