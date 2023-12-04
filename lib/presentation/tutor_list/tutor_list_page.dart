@@ -24,18 +24,25 @@ class _TutorListPageState extends State<TutorListPage> {
   final _tutorNameController = TextEditingController();
   final _focusNode = FocusNode();
 
-  final List<String> _tutorCountryFilters = [
-    "Gia sư Nước Ngoài",
-    "Gia sư Việt Nam",
-    "Gia sư Tiếng Anh bản ngữ"
+  late final List<String> _tutorCountryFilters;
+
+  late List<int> _selectedTutorCountryFilters;
+  final List<String> _tutorSpecializationFilters = [
+    "Tất cả",
+    ...Tutor.specializationList
   ];
-  late List<String> _selectedTutorCountryFilters;
+  int _selectedTutorSpecializationFilter = 0;
 
   @override
   void initState() {
     super.initState();
     _tutorDataProvider = Provider.of<TutorDataProvider>(context, listen: false);
     _displayedTutors = _tutorDataProvider.tutors;
+    _tutorCountryFilters = [
+      "Gia sư Nước Ngoài",
+      "Gia sư Việt Nam",
+      "Gia sư Tiếng Anh bản ngữ"
+    ];
     _selectedTutorCountryFilters = [];
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
@@ -146,6 +153,8 @@ class _TutorListPageState extends State<TutorListPage> {
                       SizedBox(
                         width: 500,
                         child: MultiSelectDialogField(
+                          key: GlobalKey(),
+                          initialValue: _selectedTutorCountryFilters,
                           title: const Text("Chọn quốc gia gia sư"),
                           buttonText: const Text(
                             "Chọn quốc gia gia sư",
@@ -168,9 +177,7 @@ class _TutorListPageState extends State<TutorListPage> {
                               .toList(),
                           onConfirm: (values) {
                             setState(() {
-                              _selectedTutorCountryFilters = values
-                                  .map((e) => _tutorCountryFilters[e])
-                                  .toList();
+                              _selectedTutorCountryFilters = values.cast<int>();
                               _displayedTutors = getFilteredTutors();
                             });
                           },
@@ -236,58 +243,39 @@ class _TutorListPageState extends State<TutorListPage> {
                   Wrap(
                     direction: Axis.horizontal,
                     spacing: 10,
-                    children: [
-                      TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.grey.withOpacity(0.2),
-                          shape: RoundedRectangleBorder(
+                    children: List<Widget>.generate(
+                      _tutorSpecializationFilters.length,
+                      (index) => ChoiceChip(
+                        label: Text(_tutorSpecializationFilters[index]),
+                        backgroundColor: Colors.grey.shade300,
+                        shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: Text("Tất cả",
-                            style: TextStyle(color: Colors.grey.shade800)),
+                            side: const BorderSide(
+                              style: BorderStyle.none,
+                            )),
+                        selected: _selectedTutorSpecializationFilter == index,
+                        onSelected: (selected) {
+                          setState(() {
+                            _selectedTutorSpecializationFilter =
+                                selected ? index : 0;
+                            _displayedTutors = getFilteredTutors();
+                          });
+                        },
                       ),
-                      TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.grey.withOpacity(0.2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: Text("ABC",
-                            style: TextStyle(color: Colors.grey.shade800)),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.grey.withOpacity(0.2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: Text("CDE",
-                            style: TextStyle(color: Colors.grey.shade800)),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.grey.withOpacity(0.2),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: Text("FGH",
-                            style: TextStyle(color: Colors.grey.shade800)),
-                      ),
-                    ],
+                    ),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        _selectedTutorCountryFilters.clear();
+                        _tutorNameController.clear();
+                        _selectedTutorSpecializationFilter = 0;
+                        _displayedTutors = getFilteredTutors();
+                      });
+                    },
                     style: TextButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -337,46 +325,55 @@ class _TutorListPageState extends State<TutorListPage> {
   }
 
   List<Tutor> getFilteredTutors() {
+    // By name
     List<Tutor> filteredTutors = _tutorDataProvider.tutors
         .where((tutor) => tutor.name
             .toLowerCase()
             .contains(_tutorNameController.text.toLowerCase()))
         .toList();
+
+    // By nationality
     if (_selectedTutorCountryFilters.length == 2) {
       // VN && bản ngữ
-      if (_selectedTutorCountryFilters.contains("Gia sư Việt Nam") &&
-          _selectedTutorCountryFilters.contains("Gia sư Tiếng Anh bản ngữ")) {
+      if (_selectedTutorCountryFilters.contains(1) &&
+          _selectedTutorCountryFilters.contains(2)) {
         filteredTutors = filteredTutors
             .where(
                 (tutor) => !tutor.isForeigner || tutor.isNativeEnglishSpeaker)
             .toList();
       } else // Nước ngoài && bản ngữ
-      if (_selectedTutorCountryFilters.contains("Gia sư Nước Ngoài") &&
-          _selectedTutorCountryFilters.contains("Gia sư Tiếng Anh bản ngữ")) {
+      if (_selectedTutorCountryFilters.contains(0) &&
+          _selectedTutorCountryFilters.contains(2)) {
         filteredTutors = filteredTutors
             .where((tutor) => tutor.isForeigner == false)
             .toList();
       }
     }
-
     if (_selectedTutorCountryFilters.length == 1) {
       // VN
-      if (_selectedTutorCountryFilters.contains("Gia sư Việt Nam")) {
+      if (_selectedTutorCountryFilters.contains(1)) {
         filteredTutors = filteredTutors
             .where((tutor) => tutor.isForeigner == false)
             .toList();
       } else // Nước ngoài
-      if (_selectedTutorCountryFilters.contains("Gia sư Nước Ngoài")) {
+      if (_selectedTutorCountryFilters.contains(0)) {
         filteredTutors =
             filteredTutors.where((tutor) => tutor.isForeigner).toList();
       } else // bản ngữ
-      if (_selectedTutorCountryFilters.contains("Gia sư Tiếng Anh bản ngữ")) {
+      if (_selectedTutorCountryFilters.contains(2)) {
         filteredTutors = filteredTutors
             .where((tutor) => tutor.isNativeEnglishSpeaker)
             .toList();
       }
     }
 
+    // By specialization
+    if (_selectedTutorSpecializationFilter != 0) {
+      filteredTutors = filteredTutors
+          .where((tutor) => tutor.specializations.contains(
+              _tutorSpecializationFilters[_selectedTutorSpecializationFilter]))
+          .toList();
+    }
     return filteredTutors;
   }
 
