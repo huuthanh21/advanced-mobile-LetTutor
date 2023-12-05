@@ -3,6 +3,7 @@ import 'package:faker/faker.dart';
 import 'user.dart';
 
 class Tutor {
+  final String id = faker.guid.guid();
   final String name;
   final String profilePictureUrl;
   // final String videoUrl = "https://www.youtube.com/watch?v=7oKjW1OIjuw";
