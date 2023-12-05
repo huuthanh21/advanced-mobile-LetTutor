@@ -13,7 +13,7 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
         // TODO: REDIRECT TO BE IMPLEMENTED
-        path: '/',
+        path: '/login',
         name: "login",
         builder: (context, state) => const LoginPage()),
     GoRoute(
@@ -21,7 +21,7 @@ final GoRouter router = GoRouter(
         name: "register",
         builder: (context, state) => const RegisterPage()),
     GoRoute(
-      path: '/home',
+      path: '/',
       name: "home",
       builder: (context, state) => const TutorListPage(),
       routes: [
