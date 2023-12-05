@@ -1,14 +1,22 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:lettutor/common/widgets/footer.dart';
+import 'package:provider/provider.dart';
 
+import '../../common/providers/data_provider.dart';
+import '../../common/utils/country_mapper.dart';
+import '../../common/widgets/footer.dart';
+import '../../common/widgets/rating_bar.dart';
 import '../../common/widgets/top_app_bar_content.dart';
 
 class TutorDetailPage extends StatelessWidget {
-  const TutorDetailPage({super.key});
+  const TutorDetailPage({super.key, required this.tutorId});
+
+  final String tutorId;
 
   @override
   Widget build(BuildContext context) {
+    final tutor = context.read<TutorDataProvider>().getTutorById(tutorId);
+
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(80),
@@ -30,77 +38,59 @@ class TutorDetailPage extends StatelessWidget {
                           // Header
                           Row(
                             children: [
+                              SizedBox(
+                                width: 120,
+                                height: 120,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(100),
+                                  child: Image.network(tutor.profilePictureUrl),
+                                ),
+                              ),
                               const SizedBox(
-                                  width: 150,
-                                  height: 150,
-                                  child: Icon(Icons.person, size: 100)),
-                              const SizedBox(
-                                width: 10,
+                                width: 20,
                               ),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("Nguyễn Văn A",
+                                  Text(tutor.name,
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge!
                                           .copyWith(fontSize: 22)),
                                   Row(children: [
-                                    SvgPicture.asset(
-                                      "assets/images/vietnam.svg",
-                                      height: 20,
-                                      width: 20,
-                                    ),
+                                    CountryFlag.fromCountryCode(
+                                        tutor.countryCode,
+                                        width: 20,
+                                        height: 20),
                                     const SizedBox(
                                       width: 5,
                                     ),
                                     Text(
-                                      "Việt Nam",
+                                      CountryMapper.countryCodeToName(
+                                          tutor.countryCode),
                                       style: TextStyle(
                                           color: Colors.grey.shade600),
                                     ),
                                   ]),
-                                  const Row(
-                                    children: [
-                                      Icon(
-                                        Icons.star,
-                                        color: Colors.orange,
-                                        size: 15,
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Icon(
-                                        Icons.star,
-                                        color: Colors.orange,
-                                        size: 15,
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Icon(
-                                        Icons.star,
-                                        color: Colors.orange,
-                                        size: 15,
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Icon(
-                                        Icons.star,
-                                        color: Colors.orange,
-                                        size: 15,
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Icon(
-                                        Icons.star,
-                                        color: Colors.orange,
-                                        size: 15,
-                                      ),
-                                    ],
-                                  )
+                                  if (tutor.reviews.isEmpty)
+                                    Text(
+                                      "Không có đánh giá",
+                                      style: TextStyle(
+                                          color: Colors.grey.shade600,
+                                          fontStyle: FontStyle.italic),
+                                    )
+                                  else
+                                    Row(
+                                      children: [
+                                        RatingBar(rating: tutor.rating),
+                                        Text(
+                                          "(${tutor.reviews.length})",
+                                          style: TextStyle(
+                                              color: Colors.grey.shade600,
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                      ],
+                                    ),
                                 ],
                               )
                             ],
@@ -108,7 +98,7 @@ class TutorDetailPage extends StatelessWidget {
                           SizedBox(
                             width: 500,
                             child: Text(
-                              "I am passionate about running and fitness, I often compete in trail/mountain running events and I love pushing myself. I am training to one day take part in ultra-endurance events. I also enjoy watching rugby on the weekends, reading and watching podcasts on Youtube. My most memorable life experience would be living in and traveling around Southeast Asia.",
+                              tutor.description,
                               style: TextStyle(
                                   color: Colors.grey.shade600, fontSize: 13),
                             ),
@@ -179,6 +169,7 @@ class TutorDetailPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text("Học vấn",
                                     style: TextStyle(fontSize: 16)),
@@ -187,7 +178,7 @@ class TutorDetailPage extends StatelessWidget {
                                 ),
                                 Container(
                                     margin: const EdgeInsets.only(left: 10),
-                                    child: const Text("BA")),
+                                    child: Text(tutor.education)),
                               ],
                             ),
                             const SizedBox(
@@ -206,22 +197,29 @@ class TutorDetailPage extends StatelessWidget {
                                   child: Wrap(
                                     direction: Axis.horizontal,
                                     spacing: 10,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {},
-                                        style: TextButton.styleFrom(
-                                          backgroundColor:
-                                              Colors.grey.withOpacity(0.2),
-                                          shape: RoundedRectangleBorder(
+                                    children: List<Widget>.generate(
+                                      tutor.languages.length,
+                                      (index) => Chip(
+                                        backgroundColor:
+                                            Colors.grey.withOpacity(0.2),
+                                        shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
+                                                BorderRadius.circular(20)),
+                                        side: BorderSide.none,
+                                        color: MaterialStateColor.resolveWith(
+                                            (_) => Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.1)),
+                                        label: Text(
+                                          tutor.languages[index],
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
                                         ),
-                                        child: Text("English",
-                                            style: TextStyle(
-                                                color: Colors.grey.shade800)),
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ],
@@ -243,23 +241,29 @@ class TutorDetailPage extends StatelessWidget {
                                     direction: Axis.horizontal,
                                     spacing: 10,
                                     runSpacing: 10,
-                                    children: [
-                                      for (int i = 0; i < 10; i++)
-                                        TextButton(
-                                          onPressed: () {},
-                                          style: TextButton.styleFrom(
-                                            backgroundColor:
-                                                Colors.grey.withOpacity(0.2),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                          ),
-                                          child: Text("IELTS",
-                                              style: TextStyle(
-                                                  color: Colors.grey.shade800)),
+                                    children: List<Widget>.generate(
+                                      tutor.specializations.length,
+                                      (index) => Chip(
+                                        backgroundColor:
+                                            Colors.grey.withOpacity(0.2),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20)),
+                                        side: BorderSide.none,
+                                        color: MaterialStateColor.resolveWith(
+                                            (_) => Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.1)),
+                                        label: Text(
+                                          tutor.specializations[index],
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
                                         ),
-                                    ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],

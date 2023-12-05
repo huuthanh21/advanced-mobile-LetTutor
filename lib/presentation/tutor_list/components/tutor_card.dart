@@ -58,8 +58,9 @@ class TutorCard extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () => context.push(
-                              // TODO: Navigate to tutor detail page
-                              context.namedLocation("tutor")),
+                            context.namedLocation("tutor",
+                                pathParameters: {"tid": tutor.id}),
+                          ),
                           child: Text(tutor.name,
                               style: Theme.of(context)
                                   .textTheme

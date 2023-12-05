@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lettutor/core/app_router.dart';
 import 'package:provider/provider.dart';
 
+import 'common/providers/data_provider.dart';
+import 'core/app_router.dart';
 import 'core/providers/login_provider.dart';
 
 void main() {
@@ -14,8 +15,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (BuildContext context) => LoginProvider(),
+    return MultiProvider(
+      providers: [
+        Provider(create: (_) => LoginProvider()),
+        Provider(create: (_) => TutorDataProvider()),
+      ],
       child: MaterialApp.router(
         title: 'Flutter Demo',
         theme: ThemeData(

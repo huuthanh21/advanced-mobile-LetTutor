@@ -1,7 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
-import '../common/providers/data_provider.dart';
 import '../presentation/course_detail/course_detail_page.dart';
 import '../presentation/courses/courses_page.dart';
 import '../presentation/history/history_page.dart';
@@ -14,7 +12,7 @@ import '../presentation/tutor_list/tutor_list_page.dart';
 final GoRouter router = GoRouter(
   routes: [
     GoRoute(
-        // REDIRECT TO BE IMPLEMENTED
+        // TODO: REDIRECT TO BE IMPLEMENTED
         path: '/',
         name: "login",
         builder: (context, state) => const LoginPage()),
@@ -25,15 +23,14 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/home',
       name: "home",
-      builder: (context, state) => Provider(
-        create: (context) => TutorDataProvider(),
-        child: const TutorListPage(),
-      ),
+      builder: (context, state) => const TutorListPage(),
       routes: [
         GoRoute(
-          path: 'tutor',
+          path: 'tutor/:tid',
           name: "tutor",
-          builder: (context, state) => const TutorDetailPage(),
+          builder: (context, state) => TutorDetailPage(
+            tutorId: state.pathParameters['tid']!,
+          ),
         ),
       ],
     ),
