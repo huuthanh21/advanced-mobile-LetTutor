@@ -10,4 +10,8 @@ class TutorDataProvider {
       _tutors.add(Tutor.getRandomTutor());
     });
   }
+
+  Tutor getTutorById(String id) {
+    return _tutors.firstWhere((tutor) => tutor.id == id);
+  }
 }
