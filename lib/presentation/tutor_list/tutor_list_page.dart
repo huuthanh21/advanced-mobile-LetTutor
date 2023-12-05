@@ -265,6 +265,7 @@ class _TutorListPageState extends State<TutorListPage> {
                   Wrap(
                     direction: Axis.horizontal,
                     spacing: 10,
+                    runSpacing: 10,
                     children: List<Widget>.generate(
                       _tutorSpecializationFilters.length,
                       (index) => ChoiceChip(
