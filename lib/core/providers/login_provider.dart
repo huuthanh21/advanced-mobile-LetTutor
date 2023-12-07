@@ -9,6 +9,9 @@ class LoginProvider {
     User(email: "admin@mail.com", password: "123456")
   ];
 
+  User get user => _user!;
+  List<User> get users => _users;
+
   bool _isLoggedIn = false;
 
   bool get isLoggedIn => _isLoggedIn;

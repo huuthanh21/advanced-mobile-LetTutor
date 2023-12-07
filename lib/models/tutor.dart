@@ -104,6 +104,13 @@ class Tutor {
       String randomCourse = faker.lorem.words(3).join(" ");
       tutor.courses.add(randomCourse);
     }
+    // Add random schedules for the next 7 days
+    for (var i = 0; i < 7; i++) {
+      for (var j = 0; j < faker.randomGenerator.integer(6, min: 1); j++) {
+        tutor.schedules.add(
+            Schedule(DateTime.now().add(Duration(days: i, hours: j * 2 + 8))));
+      }
+    }
     // Add random reviews
     for (var i = 0; i < faker.randomGenerator.integer(6, min: 0); i++) {
       Review randomReview = Review(

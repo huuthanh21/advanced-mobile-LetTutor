@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player_win/video_player_win_plugin.dart';
 
@@ -11,7 +12,7 @@ import 'core/providers/login_provider.dart';
 
 void main() {
   if (!kIsWeb && Platform.isWindows) WindowsVideoPlayer.registerWith();
-  runApp(const MyApp());
+  initializeDateFormatting("vi_VN", null).then((_) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider(create: (_) => LoginProvider()),
         Provider(create: (_) => TutorDataProvider()),
+        Provider(create: (_) => BookingDataProvider()),
       ],
       child: MaterialApp.router(
         title: 'Flutter Demo',

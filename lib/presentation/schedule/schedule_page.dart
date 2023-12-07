@@ -1,19 +1,34 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
+import 'package:lettutor/common/converters/start_datetime_to_schedule_range.dart';
+import 'package:lettutor/common/providers/data_provider.dart';
+import 'package:lettutor/common/widgets/top_app_bar.dart';
+import 'package:provider/provider.dart';
 
+import '../../common/utils/country_mapper.dart';
 import '../../common/widgets/footer.dart';
-import '../../common/widgets/top_app_bar_content.dart';
+import '../../core/providers/login_provider.dart';
 
 class SchedulePage extends StatelessWidget {
   const SchedulePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Providers
+    var bookingDataProvider = context.read<BookingDataProvider>();
+    var loginProvider = context.read<LoginProvider>();
+    var tutors = context.read<TutorDataProvider>().tutors;
+
+    var users = loginProvider.users;
+    bookingDataProvider.generateRandomBookings(users, tutors);
+
+    var user = loginProvider.user;
+    var bookings = bookingDataProvider.getBookingsByUser(user);
+
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: TopAppBarContent(isLoggedIn: true),
-      ),
+      appBar: TopAppBar(isLoggedIn: true),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -65,253 +80,231 @@ class SchedulePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const Gap(20),
                   Column(
-                    children: [
-                      for (int i = 0; i < 3; i++)
-                        Column(
+                    children: List<Widget>.generate(
+                      bookings.length,
+                      (index) => Container(
+                        color: Colors.grey[200],
+                        padding: const EdgeInsets.all(15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              color: Colors.grey[200],
-                              padding: const EdgeInsets.all(15),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Column(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  DateFormat('EEE, dd MMM yy', 'vi_VN')
+                                      .format(bookings[index].dateTime),
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const Text(
+                                  '1 buổi học',
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(40),
+                                    child: Image.network(bookings[index]
+                                        .tutor
+                                        .profilePictureUrl),
+                                  ),
+                                ),
+                                const Gap(10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(bookings[index].tutor.name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(fontSize: 22)),
+                                    Row(children: [
+                                      CountryFlag.fromCountryCode(
+                                          bookings[index].tutor.countryCode,
+                                          width: 20,
+                                          height: 20),
+                                      const Gap(5),
+                                      Text(
+                                        CountryMapper.countryCodeToName(
+                                            bookings[index].tutor.countryCode),
+                                        style: TextStyle(
+                                            color: Colors.grey.shade600),
+                                      ),
+                                    ]),
+                                    TextButton.icon(
+                                      onPressed: () {},
+                                      icon: const Icon(Icons.message_outlined),
+                                      label: const Text("Nhắn tin"),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  width: 500,
+                                  padding: const EdgeInsets.all(20),
+                                  color: Colors.white,
+                                  child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Fri, 17 Sep 22',
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontSize: 26,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        '1 buổi học',
-                                        style: TextStyle(
-                                          fontFamily: 'Poppins',
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      const SizedBox(
-                                          width: 40,
-                                          height: 40,
-                                          child: Icon(Icons.person)),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text("Nguyễn Văn A",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleLarge!
-                                                  .copyWith(fontSize: 22)),
-                                          Row(children: [
-                                            SvgPicture.asset(
-                                              "assets/images/vietnam.svg",
-                                              height: 20,
-                                              width: 20,
+                                          // Text and cancel button
+                                          Text(
+                                            formatDateTimeToTimeRange(
+                                                bookings[index].dateTime),
+                                            style: const TextStyle(
+                                              fontFamily: 'Open Sans',
+                                              fontSize: 22,
                                             ),
-                                            const SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text(
-                                              "Việt Nam",
-                                              style: TextStyle(
-                                                  color: Colors.grey.shade600),
-                                            ),
-                                          ]),
-                                          TextButton.icon(
-                                            onPressed: () {},
-                                            icon: const Icon(
-                                                Icons.message_outlined),
-                                            label: const Text("Nhắn tin"),
                                           ),
+                                          // Cancel button
+                                          TextButton.icon(
+                                              onPressed: () {},
+                                              icon: const Icon(
+                                                  Icons
+                                                      .cancel_presentation_outlined,
+                                                  color: Colors.red),
+                                              // red square border
+                                              style: TextButton.styleFrom(
+                                                shape: RoundedRectangleBorder(
+                                                  side: const BorderSide(
+                                                    color: Colors.red,
+                                                    width: 1,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                ),
+                                              ),
+                                              label: const Text(
+                                                'Hủy',
+                                                style: TextStyle(
+                                                    color: Colors.red),
+                                              ))
                                         ],
-                                      )
-                                    ],
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
+                                      ),
+                                      const Gap(10),
                                       Container(
-                                        width: 500,
-                                        padding: const EdgeInsets.all(20),
-                                        color: Colors.white,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                            width: 1,
+                                          ),
+                                        ),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                // Text and cancel button
-                                                const Text(
-                                                  '18:00 - 18:25',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Open Sans',
-                                                    fontSize: 22,
-                                                  ),
-                                                ),
-                                                // Cancel button
-                                                TextButton.icon(
-                                                    onPressed: () {},
-                                                    icon: const Icon(
-                                                        Icons
-                                                            .cancel_presentation_outlined,
-                                                        color: Colors.red),
-                                                    // red square border
-                                                    style: TextButton.styleFrom(
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        side: const BorderSide(
-                                                          color: Colors.red,
-                                                          width: 1,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(2),
-                                                      ),
-                                                    ),
-                                                    label: const Text(
-                                                      'Hủy',
-                                                      style: TextStyle(
-                                                          color: Colors.red),
-                                                    ))
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
                                             Container(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: Colors.grey,
-                                                  width: 1,
+                                              padding: const EdgeInsets.all(5),
+                                              // border bottom
+                                              decoration: const BoxDecoration(
+                                                border: Border(
+                                                  bottom: BorderSide(
+                                                    color: Colors.grey,
+                                                    width: 1,
+                                                  ),
                                                 ),
                                               ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.all(5),
-                                                    // border bottom
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                      border: Border(
-                                                        bottom: BorderSide(
-                                                          color: Colors.grey,
-                                                          width: 1,
+                                                  const Row(
+                                                    children: [
+                                                      Icon(Icons
+                                                          .arrow_drop_down),
+                                                      Text(
+                                                        'Yêu cầu cho buổi học',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Open Sans',
+                                                          fontSize: 16,
                                                         ),
                                                       ),
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        const Row(
-                                                          children: [
-                                                            Icon(Icons
-                                                                .arrow_drop_down),
-                                                            Text(
-                                                              'Yêu cầu cho buổi học',
-                                                              style: TextStyle(
-                                                                fontFamily:
-                                                                    'Open Sans',
-                                                                fontSize: 16,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        InkWell(
-                                                          onTap: () {},
-                                                          child: const Text(
-                                                            'Chỉnh sửa yêu cầu',
-                                                            style: TextStyle(
-                                                              fontFamily:
-                                                                  'Open Sans',
-                                                              fontSize: 16,
-                                                              color:
-                                                                  Colors.blue,
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
+                                                    ],
                                                   ),
-                                                  Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            20),
+                                                  InkWell(
+                                                    onTap: () {},
                                                     child: const Text(
-                                                        "Hiện tại không có yêu cầu cho lớp học này. Xin vui lòng viết ra bất kỳ yêu cầu nào cho giáo viên nếu có."),
+                                                      'Chỉnh sửa yêu cầu',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Open Sans',
+                                                        fontSize: 16,
+                                                        color: Colors.blue,
+                                                      ),
+                                                    ),
                                                   )
                                                 ],
                                               ),
+                                            ),
+                                            Container(
+                                              padding: const EdgeInsets.all(20),
+                                              child: const Text(
+                                                  "Hiện tại không có yêu cầu cho lớp học này. Xin vui lòng viết ra bất kỳ yêu cầu nào cho giáo viên nếu có."),
                                             )
                                           ],
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      TextButton(
-                                        onPressed: () {},
-                                        style: TextButton.styleFrom(
-                                          backgroundColor: const Color.fromRGBO(
-                                                  0, 113, 240, 1)
-                                              .withOpacity(0.9),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 20),
-                                        ),
-                                        child: const Text(
-                                          'Vào buổi học',
-                                          style: TextStyle(
-                                            fontFamily: 'Open Sans',
-                                            fontSize: 16,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
+                                      )
                                     ],
                                   ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 40,
+                                ),
+                                const Gap(20),
+                                TextButton(
+                                  onPressed: () {},
+                                  style: TextButton.styleFrom(
+                                    backgroundColor:
+                                        const Color.fromRGBO(0, 113, 240, 1)
+                                            .withOpacity(0.9),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                  ),
+                                  child: const Text(
+                                    'Vào buổi học',
+                                    style: TextStyle(
+                                      fontFamily: 'Open Sans',
+                                      fontSize: 16,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                    ],
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
+            const Gap(40),
             const Footer(),
           ],
         ),
