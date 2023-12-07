@@ -68,9 +68,11 @@ final GoRouter router = GoRouter(
     ),
   ],
   redirect: (context, state) {
-    if (context.read<LoginProvider>().isLoggedIn) {
+    if (context.read<LoginProvider>().isLoggedIn ||
+        state.matchedLocation == "/register") {
       return null;
     }
+
     return "/login";
   },
 );
