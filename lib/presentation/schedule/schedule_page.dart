@@ -87,6 +87,7 @@ class SchedulePage extends StatelessWidget {
                       (index) => Container(
                         color: Colors.grey[200],
                         padding: const EdgeInsets.all(15),
+                        margin: const EdgeInsets.only(bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
