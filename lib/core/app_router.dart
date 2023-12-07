@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../presentation/course_detail/course_detail_page.dart';
 import '../presentation/courses/courses_page.dart';
@@ -8,18 +9,30 @@ import '../presentation/login/register_page.dart';
 import '../presentation/schedule/schedule_page.dart';
 import '../presentation/tutor_detail/tutor_detail_page.dart';
 import '../presentation/tutor_list/tutor_list_page.dart';
+import 'providers/login_provider.dart';
 
 final GoRouter router = GoRouter(
   routes: [
     GoRoute(
-        // TODO: REDIRECT TO BE IMPLEMENTED
         path: '/login',
         name: "login",
-        builder: (context, state) => const LoginPage()),
+        builder: (context, state) => const LoginPage(),
+        redirect: (context, state) {
+          if (context.read<LoginProvider>().isLoggedIn) {
+            return "/";
+          }
+          return null;
+        }),
     GoRoute(
         path: '/register',
         name: "register",
-        builder: (context, state) => const RegisterPage()),
+        builder: (context, state) => const RegisterPage(),
+        redirect: (context, state) {
+          if (context.read<LoginProvider>().isLoggedIn) {
+            return "/";
+          }
+          return null;
+        }),
     GoRoute(
       path: '/',
       name: "home",
@@ -54,4 +67,10 @@ final GoRouter router = GoRouter(
       ],
     ),
   ],
+  redirect: (context, state) {
+    if (context.read<LoginProvider>().isLoggedIn) {
+      return null;
+    }
+    return "/login";
+  },
 );
