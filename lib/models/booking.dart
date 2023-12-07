@@ -11,6 +11,7 @@ class Booking {
   final User user;
   final Tutor tutor;
   final DateTime dateTime;
+  String? request;
   BookingStatus status = BookingStatus.pending;
 
   Booking({
@@ -22,13 +23,30 @@ class Booking {
 
 class Grading {
   final int behaviorRating;
-  final int listeningRating;
-  final int speakingRating;
-  final int vocabularyRating;
-  final String comment;
+  final String behaviorComment;
 
-  Grading(this.behaviorRating, this.listeningRating, this.speakingRating,
-      this.vocabularyRating, this.comment);
+  final int listeningRating;
+  final String listeningComment;
+
+  final int speakingRating;
+  final String speakingComment;
+
+  final int vocabularyRating;
+  final String vocabularyComment;
+
+  final String overallComment;
+
+  Grading({
+    required this.behaviorRating,
+    required this.behaviorComment,
+    required this.listeningRating,
+    required this.listeningComment,
+    required this.speakingRating,
+    required this.speakingComment,
+    required this.vocabularyRating,
+    required this.vocabularyComment,
+    required this.overallComment,
+  });
 }
 
 class History {

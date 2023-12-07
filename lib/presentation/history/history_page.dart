@@ -1,19 +1,35 @@
+import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
+import 'package:lettutor/common/widgets/rating_bar.dart';
+import 'package:provider/provider.dart';
 
+import '../../common/converters/start_datetime_to_schedule_range.dart';
+import '../../common/providers/data_provider.dart';
+import '../../common/utils/country_mapper.dart';
 import '../../common/widgets/footer.dart';
-import '../../common/widgets/top_app_bar_content.dart';
+import '../../common/widgets/top_app_bar.dart';
+import '../../core/providers/login_provider.dart';
 
 class HistoryPage extends StatelessWidget {
   const HistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Providers
+    var bookingDataProvider = context.read<BookingDataProvider>();
+    var loginProvider = context.read<LoginProvider>();
+    var tutors = context.read<TutorDataProvider>().tutors;
+
+    var users = loginProvider.users;
+    bookingDataProvider.generateRandomData(users, tutors);
+
+    var user = loginProvider.user;
+    var histories = bookingDataProvider.getHistoriesByUser(user);
+
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: TopAppBarContent(isLoggedIn: true),
-      ),
+      appBar: TopAppBar(isLoggedIn: true),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -66,648 +82,462 @@ class HistoryPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const Gap(20),
                   Column(
-                    children: [
-                      Column(
-                        children: [
-                          Container(
-                            color: Colors.grey[200],
-                            padding: const EdgeInsets.all(15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List<Widget>.generate(
+                      histories.length,
+                      (index) => Container(
+                        color: Colors.grey[200],
+                        padding: const EdgeInsets.all(15),
+                        margin: const EdgeInsets.only(bottom: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Fri, 17 Sep 22',
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Text(
-                                      '1 buổi học',
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  DateFormat('EEE, dd MMM yy', 'vi_VN').format(
+                                      histories[index].booking.dateTime),
+                                  style: const TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                                Row(
-                                  children: [
-                                    const SizedBox(
-                                        width: 40,
-                                        height: 40,
-                                        child: Icon(Icons.person)),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text("Nguyễn Văn A",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleLarge!
-                                                .copyWith(fontSize: 22)),
-                                        Row(children: [
-                                          SvgPicture.asset(
-                                            "assets/images/vietnam.svg",
-                                            height: 20,
-                                            width: 20,
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            "Việt Nam",
-                                            style: TextStyle(
-                                                color: Colors.grey.shade600),
-                                          ),
-                                        ]),
-                                        TextButton.icon(
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                              Icons.message_outlined),
-                                          label: const Text("Nhắn tin"),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      width: 500,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      color: Colors.white,
-                                      child: const Text(
-                                        'Thời gian bài học: 06:30 - 06:55',
-                                        style: TextStyle(
-                                          fontFamily: 'Open Sans',
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Container(
-                                      width: 500,
-                                      color: Colors.white,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 20),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: Colors.grey.shade300,
-                                                  width: 1,
-                                                ),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              'Không có yêu cầu cho buổi học',
-                                              style: TextStyle(
-                                                fontFamily: 'Open Sans',
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 20),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: Colors.grey.shade300,
-                                                  width: 1,
-                                                ),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              'Gia sư chưa có đánh giá',
-                                              style: TextStyle(
-                                                fontFamily: 'Open Sans',
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 20),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: const Text(
-                                                    'Đánh giá',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Open Sans',
-                                                      fontSize: 16,
-                                                      color: Colors.blue,
-                                                    ),
-                                                  ),
-                                                ),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: const Text(
-                                                    'Báo cáo',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Open Sans',
-                                                      fontSize: 16,
-                                                      color: Colors.blue,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                const Text(
+                                  '1 buổi học',
+                                  style: TextStyle(
+                                    fontFamily: 'Poppins',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            color: Colors.grey[200],
-                            padding: const EdgeInsets.all(15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Row(
                               children: [
-                                const Column(
+                                SizedBox(
+                                    width: 40,
+                                    height: 40,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(40),
+                                      child: Image.network(histories[index]
+                                          .booking
+                                          .tutor
+                                          .profilePictureUrl),
+                                    )),
+                                const Gap(10),
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      'Fri, 17 Sep 22',
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Text(
-                                      '1 buổi học',
-                                      style: TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    const SizedBox(
-                                        width: 40,
-                                        height: 40,
-                                        child: Icon(Icons.person)),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text("Nguyễn Văn A",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleLarge!
-                                                .copyWith(fontSize: 22)),
-                                        Row(children: [
-                                          SvgPicture.asset(
-                                            "assets/images/vietnam.svg",
-                                            height: 20,
-                                            width: 20,
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                          Text(
-                                            "Việt Nam",
-                                            style: TextStyle(
-                                                color: Colors.grey.shade600),
-                                          ),
-                                        ]),
-                                        TextButton.icon(
-                                          onPressed: () {},
-                                          icon: const Icon(
-                                              Icons.message_outlined),
-                                          label: const Text("Nhắn tin"),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      width: 500,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      color: Colors.white,
-                                      child: const Text(
-                                        'Thời gian bài học: 06:30 - 06:55',
+                                    Text(histories[index].booking.tutor.name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge!
+                                            .copyWith(fontSize: 22)),
+                                    Row(children: [
+                                      CountryFlag.fromCountryCode(
+                                          histories[index]
+                                              .booking
+                                              .tutor
+                                              .countryCode,
+                                          width: 20,
+                                          height: 20),
+                                      const Gap(5),
+                                      Text(
+                                        CountryMapper.countryCodeToName(
+                                            histories[index]
+                                                .booking
+                                                .tutor
+                                                .countryCode),
                                         style: TextStyle(
-                                          fontFamily: 'Open Sans',
-                                          fontSize: 18,
+                                            color: Colors.grey.shade600),
+                                      ),
+                                    ]),
+                                    TextButton.icon(
+                                        onPressed: () {},
+                                        icon:
+                                            const Icon(Icons.message_outlined),
+                                        label: const Text("Nhắn tin"),
+                                        style: ButtonStyle(
+                                          padding:
+                                              MaterialStateProperty.resolveWith(
+                                                  (states) => EdgeInsets.zero),
+                                          overlayColor:
+                                              MaterialStateProperty.resolveWith(
+                                                  (states) =>
+                                                      Colors.transparent),
+                                        )),
+                                  ],
+                                )
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  width: 500,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20),
+                                  color: Colors.white,
+                                  child: Text(
+                                    'Thời gian bài học: ${formatDateTimeToTimeRange(histories[index].booking.dateTime)}',
+                                    style: const TextStyle(
+                                      fontFamily: 'Open Sans',
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                                const Gap(20),
+                                Container(
+                                  width: 500,
+                                  color: Colors.white,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 20),
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: Colors.grey.shade300,
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            if (histories[index]
+                                                    .booking
+                                                    .request ==
+                                                null)
+                                              const Text(
+                                                'Không có yêu cầu cho buổi học',
+                                                style: TextStyle(
+                                                  fontFamily: 'Open Sans',
+                                                  fontSize: 16,
+                                                ),
+                                              )
+                                            else
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Text(
+                                                    'Yêu cầu cho buổi học',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Open Sans',
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  const Gap(20),
+                                                  Text(
+                                                    histories[index]
+                                                        .booking
+                                                        .request!,
+                                                    style: const TextStyle(
+                                                      fontFamily: 'Open Sans',
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                          ],
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    Container(
-                                      width: 500,
-                                      color: Colors.white,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 20),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: Colors.grey.shade300,
-                                                  width: 1,
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 20),
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: Colors.grey.shade300,
+                                              width: 1,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            if (histories[index].grading ==
+                                                null)
+                                              const Text(
+                                                'Gia sư chưa có đánh giá',
+                                                style: TextStyle(
+                                                  fontFamily: 'Open Sans',
+                                                  fontSize: 16,
                                                 ),
+                                              )
+                                            else
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      // text and drop down icon
+                                                      Text(
+                                                        'Đánh giá từ gia sư',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Open Sans',
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                      Icon(
+                                                        Icons
+                                                            .arrow_drop_down_outlined,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const Gap(20),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Buổi 1: ${formatDateTimeToTimeRange(histories[index].booking.dateTime)}',
+                                                        style: const TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                      const Gap(10),
+                                                      const Text(
+                                                        // TODO: Change to actual status
+                                                        'Lesson status: Completed',
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Open Sans',
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                      const Gap(10),
+                                                      Row(
+                                                        children: [
+                                                          const Text(
+                                                            "Behavior: (",
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          RatingBar(
+                                                              rating: histories[
+                                                                      index]
+                                                                  .grading!
+                                                                  .behaviorRating),
+                                                          const Text(
+                                                            "): ",
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            histories[index]
+                                                                .grading!
+                                                                .behaviorComment,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Gap(10),
+                                                      Row(
+                                                        children: [
+                                                          const Text(
+                                                            "Listening: (",
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          RatingBar(
+                                                              rating: histories[
+                                                                      index]
+                                                                  .grading!
+                                                                  .listeningRating),
+                                                          const Text(
+                                                            "): ",
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            histories[index]
+                                                                .grading!
+                                                                .listeningComment,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Gap(10),
+                                                      Row(
+                                                        children: [
+                                                          const Text(
+                                                            "Speaking: (",
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          RatingBar(
+                                                              rating: histories[
+                                                                      index]
+                                                                  .grading!
+                                                                  .speakingRating),
+                                                          const Text(
+                                                            "): ",
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            histories[index]
+                                                                .grading!
+                                                                .speakingComment,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Gap(10),
+                                                      Row(
+                                                        children: [
+                                                          const Text(
+                                                            "Vocabulary: (",
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          RatingBar(
+                                                              rating: histories[
+                                                                      index]
+                                                                  .grading!
+                                                                  .vocabularyRating),
+                                                          const Text(
+                                                            "): ",
+                                                            style: TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            histories[index]
+                                                                .grading!
+                                                                .vocabularyComment,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontFamily:
+                                                                  'Open Sans',
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const Gap(10),
+                                                      Text(
+                                                        'Overall comment: ${histories[index].grading!.overallComment}',
+                                                        style: const TextStyle(
+                                                          fontFamily:
+                                                              'Open Sans',
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                            child: const Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    // text and drop down icon
-                                                    Text(
-                                                      'Yêu cầu cho buổi học',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Open Sans',
-                                                        fontSize: 16,
-                                                      ),
-                                                    ),
-                                                    Icon(
-                                                      Icons
-                                                          .arrow_drop_down_outlined,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: 20,
-                                                ),
-                                                Text(
-                                                  'Thầy nói hơi nhỏ',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Open Sans',
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 20),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                bottom: BorderSide(
-                                                  color: Colors.grey.shade300,
-                                                  width: 1,
-                                                ),
-                                              ),
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    // text and drop down icon
-                                                    Text(
-                                                      'Đánh giá từ gia sư',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Open Sans',
-                                                        fontSize: 16,
-                                                      ),
-                                                    ),
-                                                    Icon(
-                                                      Icons
-                                                          .arrow_drop_down_outlined,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 20,
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    const Text(
-                                                      'Buổi 1: 00:00 - 00:25',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    const Text(
-                                                      'Lesson status: Completed',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Open Sans',
-                                                        fontSize: 16,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        const Text(
-                                                          "Behavior: (",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            for (int i = 0;
-                                                                i < 5;
-                                                                i++)
-                                                              const Icon(
-                                                                Icons.star,
-                                                                color: Colors
-                                                                    .amber,
-                                                              ),
-                                                          ],
-                                                        ),
-                                                        const Text(
-                                                          "): ",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                        const Text(
-                                                          "Hay",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        const Text(
-                                                          "Listening: (",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            for (int i = 0;
-                                                                i < 5;
-                                                                i++)
-                                                              const Icon(
-                                                                Icons.star,
-                                                                color: Colors
-                                                                    .amber,
-                                                              ),
-                                                          ],
-                                                        ),
-                                                        const Text(
-                                                          "): ",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                        const Text(
-                                                          "Hay",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        const Text(
-                                                          "Speaking: (",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            for (int i = 0;
-                                                                i < 5;
-                                                                i++)
-                                                              const Icon(
-                                                                Icons.star,
-                                                                color: Colors
-                                                                    .amber,
-                                                              ),
-                                                          ],
-                                                        ),
-                                                        const Text(
-                                                          "): ",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                        const Text(
-                                                          "Hay",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        const Text(
-                                                          "Vocabulary: (",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            for (int i = 0;
-                                                                i < 5;
-                                                                i++)
-                                                              const Icon(
-                                                                Icons.star,
-                                                                color: Colors
-                                                                    .amber,
-                                                              ),
-                                                          ],
-                                                        ),
-                                                        const Text(
-                                                          "): ",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                        const Text(
-                                                          "Hay",
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                'Open Sans',
-                                                            fontSize: 16,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 10,
-                                                    ),
-                                                    const Text(
-                                                      'Overall comment: Good',
-                                                      style: TextStyle(
-                                                        fontFamily: 'Open Sans',
-                                                        fontSize: 16,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 10, horizontal: 20),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: const Text(
-                                                    'Đánh giá',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Open Sans',
-                                                      fontSize: 16,
-                                                      color: Colors.blue,
-                                                    ),
-                                                  ),
-                                                ),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: const Text(
-                                                    'Báo cáo',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Open Sans',
-                                                      fontSize: 16,
-                                                      color: Colors.blue,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      Container(
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 20),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            InkWell(
+                                              onTap: () {},
+                                              child: const Text(
+                                                'Đánh giá',
+                                                style: TextStyle(
+                                                  fontFamily: 'Open Sans',
+                                                  fontSize: 16,
+                                                  color: Colors.blue,
+                                                ),
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () {},
+                                              child: const Text(
+                                                'Báo cáo',
+                                                style: TextStyle(
+                                                  fontFamily: 'Open Sans',
+                                                  fontSize: 16,
+                                                  color: Colors.blue,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
+            const Gap(20),
             const Footer(),
           ],
         ),

@@ -22,7 +22,7 @@ class SchedulePage extends StatelessWidget {
     var tutors = context.read<TutorDataProvider>().tutors;
 
     var users = loginProvider.users;
-    bookingDataProvider.generateRandomBookings(users, tutors);
+    bookingDataProvider.generateRandomData(users, tutors);
 
     var user = loginProvider.user;
     var bookings = bookingDataProvider.getBookingsByUser(user);

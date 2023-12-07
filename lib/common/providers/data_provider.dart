@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:faker/faker.dart';
+
 import '../../models/booking.dart';
 import '../../models/tutor.dart';
 import '../../models/user.dart';
@@ -31,12 +33,12 @@ class BookingDataProvider {
   List<Booking> get bookings => _bookings;
 
   void generateRandomData(List<User> users, List<Tutor> tutors) {
-    generateRandomBookings(users, tutors);
-    generateRandomHistories(users, tutors);
+    _generateRandomBookings(users, tutors);
+    _generateRandomHistories(users, tutors);
     _isInitialized = true;
   }
 
-  void generateRandomHistories(List<User> users, List<Tutor> tutors) {
+  void _generateRandomHistories(List<User> users, List<Tutor> tutors) {
     if (_isInitialized) return;
 
     var random = Random();
@@ -54,22 +56,27 @@ class BookingDataProvider {
                       schedule.dateTime.subtract(const Duration(days: 3))),
               completed: completed);
           if (completed && random.nextBool()) {
+            history.booking.request = faker.lorem.sentence();
             history.grading = Grading(
-              random.nextInt(5) + 1,
-              random.nextInt(5) + 1,
-              random.nextInt(5) + 1,
-              random.nextInt(5) + 1,
-              "Good",
+              behaviorRating: random.nextInt(5) + 1,
+              behaviorComment: faker.lorem.sentence(),
+              listeningRating: random.nextInt(5) + 1,
+              listeningComment: faker.lorem.sentence(),
+              speakingRating: random.nextInt(5) + 1,
+              speakingComment: faker.lorem.sentence(),
+              vocabularyRating: random.nextInt(5) + 1,
+              vocabularyComment: faker.lorem.sentence(),
+              overallComment: faker.lorem.sentence(),
             );
           }
-          addHistory(history.booking, completed);
+          addHistory(history);
         }
       }
     }
     sortHistoriesByDate();
   }
 
-  void generateRandomBookings(List<User> users, List<Tutor> tutors) {
+  void _generateRandomBookings(List<User> users, List<Tutor> tutors) {
     if (_isInitialized) return;
 
     var random = Random();
@@ -78,27 +85,25 @@ class BookingDataProvider {
         int scheduleIndex = random.nextInt(tutor.schedules.length);
         Schedule schedule = tutor.schedules[scheduleIndex];
         if (random.nextBool()) {
-          addBooking(user, tutor, schedule.dateTime);
+          var booking =
+              Booking(user: user, tutor: tutor, dateTime: schedule.dateTime);
+          if (random.nextBool()) {
+            booking.request = faker.lorem.sentence();
+          }
+          addBooking(booking);
         }
       }
     }
     sortBookingsByDate();
   }
 
-  void addBooking(User user, Tutor tutor, DateTime dateTime) {
-    _bookings.add(Booking(
-      user: user,
-      tutor: tutor,
-      dateTime: dateTime,
-    ));
+  void addBooking(Booking booking) {
+    _bookings.add(booking);
     sortBookingsByDate();
   }
 
-  void addHistory(Booking booking, bool completed) {
-    _histories.add(History(
-      booking: booking,
-      completed: completed,
-    ));
+  void addHistory(History history) {
+    _histories.add(history);
     sortHistoriesByDate();
   }
 
