@@ -22,12 +22,52 @@ class TutorDataProvider {
 
 class BookingDataProvider {
   final List<Booking> _bookings = [];
+  final List<History> _histories = [];
 
   // Development only
   bool _isInitialized = false;
 
   // sort by date
   List<Booking> get bookings => _bookings;
+
+  void generateRandomData(List<User> users, List<Tutor> tutors) {
+    generateRandomBookings(users, tutors);
+    generateRandomHistories(users, tutors);
+    _isInitialized = true;
+  }
+
+  void generateRandomHistories(List<User> users, List<Tutor> tutors) {
+    if (_isInitialized) return;
+
+    var random = Random();
+    for (User user in users) {
+      for (Tutor tutor in tutors) {
+        int scheduleIndex = random.nextInt(tutor.schedules.length);
+        Schedule schedule = tutor.schedules[scheduleIndex];
+        if (random.nextBool()) {
+          bool completed = random.nextBool();
+          var history = History(
+              booking: Booking(
+                  user: user,
+                  tutor: tutor,
+                  dateTime:
+                      schedule.dateTime.subtract(const Duration(days: 3))),
+              completed: completed);
+          if (completed && random.nextBool()) {
+            history.grading = Grading(
+              random.nextInt(5) + 1,
+              random.nextInt(5) + 1,
+              random.nextInt(5) + 1,
+              random.nextInt(5) + 1,
+              "Good",
+            );
+          }
+          addHistory(history.booking, completed);
+        }
+      }
+    }
+    sortHistoriesByDate();
+  }
 
   void generateRandomBookings(List<User> users, List<Tutor> tutors) {
     if (_isInitialized) return;
@@ -42,7 +82,6 @@ class BookingDataProvider {
         }
       }
     }
-    _isInitialized = true;
     sortBookingsByDate();
   }
 
@@ -55,13 +94,31 @@ class BookingDataProvider {
     sortBookingsByDate();
   }
 
+  void addHistory(Booking booking, bool completed) {
+    _histories.add(History(
+      booking: booking,
+      completed: completed,
+    ));
+    sortHistoriesByDate();
+  }
+
   List<Booking> getBookingsByUser(User user) {
     return _bookings
         .where((booking) => booking.user.email == user.email)
         .toList();
   }
 
+  List<History> getHistoriesByUser(User user) {
+    return _histories
+        .where((history) => history.booking.user.email == user.email)
+        .toList();
+  }
+
   void sortBookingsByDate() {
     _bookings.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+  }
+
+  void sortHistoriesByDate() {
+    _histories.sort((a, b) => a.booking.dateTime.compareTo(b.booking.dateTime));
   }
 }
