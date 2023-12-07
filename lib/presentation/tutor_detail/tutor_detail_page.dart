@@ -53,6 +53,12 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _videoController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TopAppBar(isLoggedIn: true),
