@@ -1,5 +1,6 @@
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../common/utils/country_mapper.dart';
@@ -49,9 +50,7 @@ class TutorCard extends StatelessWidget {
                         child: Image.network(tutor.profilePictureUrl),
                       ),
                     ),
-                    const SizedBox(
-                      width: 20,
-                    ),
+                    const Gap(20),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,9 +69,7 @@ class TutorCard extends StatelessWidget {
                         Row(children: [
                           CountryFlag.fromCountryCode(tutor.countryCode,
                               width: 20, height: 20),
-                          const SizedBox(
-                            width: 5,
-                          ),
+                          const Gap(5),
                           Text(
                             CountryMapper.countryCodeToName(tutor.countryCode),
                             style: TextStyle(color: Colors.grey.shade600),
@@ -97,9 +94,6 @@ class TutorCard extends StatelessWidget {
               ],
             ),
           ),
-          // const SizedBox(
-          //   height: 10,
-          // ),
           Flexible(
             flex: 3,
             fit: FlexFit.tight,
@@ -123,9 +117,6 @@ class TutorCard extends StatelessWidget {
               ],
             ),
           ),
-          // const SizedBox(
-          //   height: 10,
-          // ),
           Flexible(
             flex: 4,
             fit: FlexFit.tight,
@@ -137,9 +128,6 @@ class TutorCard extends StatelessWidget {
               style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
             ),
           ),
-          // const SizedBox(
-          //   height: 20,
-          // ),
           Flexible(
             flex: 2,
             fit: FlexFit.tight,

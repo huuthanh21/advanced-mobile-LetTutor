@@ -1,12 +1,14 @@
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/providers/data_provider.dart';
 import '../../common/utils/country_mapper.dart';
 import '../../common/widgets/footer.dart';
 import '../../common/widgets/rating_bar.dart';
-import '../../common/widgets/top_app_bar_content.dart';
+import '../../common/widgets/top_app_bar.dart';
 
 class TutorDetailPage extends StatelessWidget {
   const TutorDetailPage({super.key, required this.tutorId});
@@ -18,10 +20,7 @@ class TutorDetailPage extends StatelessWidget {
     final tutor = context.read<TutorDataProvider>().getTutorById(tutorId);
 
     return Scaffold(
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(80),
-        child: TopAppBarContent(isLoggedIn: true),
-      ),
+      appBar: TopAppBar(isLoggedIn: true),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -46,9 +45,7 @@ class TutorDetailPage extends StatelessWidget {
                                   child: Image.network(tutor.profilePictureUrl),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 20,
-                              ),
+                              const Gap(20),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -62,9 +59,7 @@ class TutorDetailPage extends StatelessWidget {
                                         tutor.countryCode,
                                         width: 20,
                                         height: 20),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
+                                    const Gap(5),
                                     Text(
                                       CountryMapper.countryCodeToName(
                                           tutor.countryCode),
@@ -95,6 +90,7 @@ class TutorDetailPage extends StatelessWidget {
                               )
                             ],
                           ),
+                          const Gap(20),
                           SizedBox(
                             width: 500,
                             child: Text(
@@ -103,9 +99,7 @@ class TutorDetailPage extends StatelessWidget {
                                   color: Colors.grey.shade600, fontSize: 13),
                             ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
+                          const Gap(20),
                           Row(children: [
                             Column(
                               children: [
@@ -125,9 +119,7 @@ class TutorDetailPage extends StatelessWidget {
                                 )
                               ],
                             ),
-                            const SizedBox(
-                              width: 150,
-                            ),
+                            const Gap(150),
                             Column(
                               children: [
                                 IconButton(
@@ -157,9 +149,7 @@ class TutorDetailPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 50,
-                  ),
+                  const Gap(50),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -168,30 +158,26 @@ class TutorDetailPage extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // Học vấn
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text("Học vấn",
                                     style: TextStyle(fontSize: 16)),
-                                const SizedBox(
-                                  height: 10,
-                                ),
+                                const Gap(10),
                                 Container(
                                     margin: const EdgeInsets.only(left: 10),
                                     child: Text(tutor.education)),
                               ],
                             ),
-                            const SizedBox(
-                              height: 30,
-                            ),
+                            const Gap(30),
+                            // Ngôn ngữ
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text("Ngôn ngữ",
                                     style: TextStyle(fontSize: 16)),
-                                const SizedBox(
-                                  height: 10,
-                                ),
+                                const Gap(10),
                                 Container(
                                   margin: const EdgeInsets.only(left: 10),
                                   child: Wrap(
@@ -224,17 +210,14 @@ class TutorDetailPage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 30,
-                            ),
+                            const Gap(30),
+                            // Chuyên ngành
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text("Chuyên ngành",
                                     style: TextStyle(fontSize: 16)),
-                                const SizedBox(
-                                  height: 10,
-                                ),
+                                const Gap(10),
                                 Container(
                                   margin: const EdgeInsets.only(left: 10),
                                   child: Wrap(
@@ -268,17 +251,14 @@ class TutorDetailPage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 30,
-                            ),
+                            const Gap(30),
+                            // Khóa học tham khảo
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text("Khóa học tham khảo",
                                     style: TextStyle(fontSize: 16)),
-                                const SizedBox(
-                                  height: 10,
-                                ),
+                                const Gap(10),
                                 Container(
                                   margin: const EdgeInsets.only(left: 10),
                                   child: Column(
@@ -316,22 +296,56 @@ class TutorDetailPage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 30,
+                            const Gap(30),
+                            // Sở thích
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Sở thích",
+                                    style: TextStyle(fontSize: 16)),
+                                const Gap(10),
+                                Container(
+                                    margin: const EdgeInsets.only(left: 10),
+                                    child: Text(tutor.hobbies)),
+                              ],
                             ),
+                            const Gap(30),
+                            // Kinh nghiệm giảng dạy
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Kinh nghiệm giảng dạy",
+                                    style: TextStyle(fontSize: 16)),
+                                const Gap(10),
+                                Container(
+                                    margin: const EdgeInsets.only(left: 10),
+                                    child: Text(tutor.experience)),
+                              ],
+                            ),
+                            const Gap(30),
+                            // Đánh giá
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text("Người khác đánh giá",
                                     style: TextStyle(fontSize: 16)),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    for (int i = 0; i < 5; i++)
-                                      Row(
+                                const Gap(10),
+                                if (tutor.reviews.isEmpty)
+                                  Text(
+                                    "Không có đánh giá",
+                                    style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontStyle: FontStyle.italic),
+                                  )
+                                else
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: List<Widget>.generate(
+                                      tutor.reviews.length,
+                                      (index) => Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           const SizedBox(
                                               width: 50,
@@ -344,76 +358,45 @@ class TutorDetailPage extends StatelessWidget {
                                             children: [
                                               Row(
                                                 children: [
-                                                  Text("Nguyễn Văn A",
+                                                  Text(
+                                                      tutor.reviews[index]
+                                                          .author.email,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .headlineLarge!
                                                           .copyWith(
                                                               fontSize: 14)),
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Text("9 giờ trước",
+                                                  const Gap(10),
+                                                  Text(
+                                                      DateFormat.yMd().format(
+                                                          tutor.reviews[index]
+                                                              .date),
                                                       style: TextStyle(
                                                           color: Colors
                                                               .grey.shade600,
                                                           fontSize: 13)),
                                                 ],
                                               ),
-                                              const Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.orange,
-                                                    size: 15,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.orange,
-                                                    size: 15,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.orange,
-                                                    size: 15,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.orange,
-                                                    size: 15,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.orange,
-                                                    size: 15,
-                                                  ),
-                                                ],
+                                              RatingBar(
+                                                  rating: tutor
+                                                      .reviews[index].rating),
+                                              SizedBox(
+                                                width: 300,
+                                                child: Text(
+                                                  tutor.reviews[index].content,
+                                                  softWrap: true,
+                                                  maxLines: 3,
+                                                  style: const TextStyle(
+                                                      fontSize: 13),
+                                                ),
                                               ),
-                                              const Text(
-                                                "good",
-                                                style: TextStyle(fontSize: 13),
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
+                                              const Gap(10),
                                             ],
                                           )
                                         ],
                                       ),
-                                  ],
-                                )
+                                    ),
+                                  )
                               ],
                             ),
                           ],

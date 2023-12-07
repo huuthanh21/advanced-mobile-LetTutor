@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
@@ -102,9 +103,7 @@ class _TutorListPageState extends State<TutorListPage> {
                             fontFamily: "Open Sans",
                             color: Colors.white),
                       ),
-                      const SizedBox(
-                        width: 20,
-                      ),
+                      const Gap(20),
                       TextButton.icon(
                         onPressed: () {},
                         icon: Icon(Icons.video_call,
@@ -140,9 +139,7 @@ class _TutorListPageState extends State<TutorListPage> {
                           fontSize: 33,
                         ),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const Gap(20),
                   Wrap(
                     direction: Axis.horizontal,
                     spacing: 10,
@@ -205,9 +202,7 @@ class _TutorListPageState extends State<TutorListPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const Gap(10),
                   const Text("Chọn thời gian dạy kèm có lịch trống: "),
                   Wrap(
                     direction: Axis.horizontal,
@@ -259,9 +254,7 @@ class _TutorListPageState extends State<TutorListPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const Gap(10),
                   Wrap(
                     direction: Axis.horizontal,
                     spacing: 10,
@@ -287,9 +280,7 @@ class _TutorListPageState extends State<TutorListPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const Gap(10),
                   TextButton(
                     onPressed: () => resetFilters(),
                     style: TextButton.styleFrom(
@@ -305,17 +296,13 @@ class _TutorListPageState extends State<TutorListPage> {
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.primary)),
                   ),
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const Gap(20),
                   Text("Gia sư được đề xuất",
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge!
                           .copyWith(fontSize: 28)),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const Gap(10),
                   GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
