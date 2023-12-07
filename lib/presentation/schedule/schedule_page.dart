@@ -148,10 +148,19 @@ class SchedulePage extends StatelessWidget {
                                       ),
                                     ]),
                                     TextButton.icon(
-                                      onPressed: () {},
-                                      icon: const Icon(Icons.message_outlined),
-                                      label: const Text("Nhắn tin"),
-                                    ),
+                                        onPressed: () {},
+                                        icon:
+                                            const Icon(Icons.message_outlined),
+                                        label: const Text("Nhắn tin"),
+                                        style: ButtonStyle(
+                                          padding:
+                                              MaterialStateProperty.resolveWith(
+                                                  (states) => EdgeInsets.zero),
+                                          overlayColor:
+                                              MaterialStateProperty.resolveWith(
+                                                  (states) =>
+                                                      Colors.transparent),
+                                        )),
                                   ],
                                 )
                               ],
