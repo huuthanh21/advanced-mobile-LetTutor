@@ -1,24 +1,59 @@
+import 'dart:developer';
+
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player/video_player.dart';
+import 'package:video_player_control_panel/video_player_control_panel.dart';
 
 import '../../common/providers/data_provider.dart';
 import '../../common/utils/country_mapper.dart';
 import '../../common/widgets/footer.dart';
 import '../../common/widgets/rating_bar.dart';
 import '../../common/widgets/top_app_bar.dart';
+import '../../models/tutor.dart';
 
-class TutorDetailPage extends StatelessWidget {
+class TutorDetailPage extends StatefulWidget {
   const TutorDetailPage({super.key, required this.tutorId});
 
   final String tutorId;
 
   @override
-  Widget build(BuildContext context) {
-    final tutor = context.read<TutorDataProvider>().getTutorById(tutorId);
+  State<TutorDetailPage> createState() => _TutorDetailPageState();
+}
 
+class _TutorDetailPageState extends State<TutorDetailPage> {
+  late final TutorDataProvider _tutorDataProvider =
+      context.read<TutorDataProvider>();
+
+  late VideoPlayerController _videoController;
+  late Tutor _tutor;
+
+  @override
+  void initState() {
+    super.initState();
+    _tutor = _tutorDataProvider.getTutorById(widget.tutorId);
+    _initVideoPlayer();
+  }
+
+  void _initVideoPlayer() {
+    _videoController = VideoPlayerController.networkUrl(_tutor.videoUrl);
+    _videoController.initialize().then((value) {
+      if (!_videoController.value.isInitialized) {
+        log("Video player failed to initialize");
+        return;
+      }
+      _videoController.play();
+      setState(() {});
+    }).catchError((e) {
+      log("Video player failed to initialize: $e");
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: TopAppBar(isLoggedIn: true),
       body: SingleChildScrollView(
@@ -42,32 +77,33 @@ class TutorDetailPage extends StatelessWidget {
                                 height: 120,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(100),
-                                  child: Image.network(tutor.profilePictureUrl),
+                                  child:
+                                      Image.network(_tutor.profilePictureUrl),
                                 ),
                               ),
                               const Gap(20),
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(tutor.name,
+                                  Text(_tutor.name,
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleLarge!
                                           .copyWith(fontSize: 22)),
                                   Row(children: [
                                     CountryFlag.fromCountryCode(
-                                        tutor.countryCode,
+                                        _tutor.countryCode,
                                         width: 20,
                                         height: 20),
                                     const Gap(5),
                                     Text(
                                       CountryMapper.countryCodeToName(
-                                          tutor.countryCode),
+                                          _tutor.countryCode),
                                       style: TextStyle(
                                           color: Colors.grey.shade600),
                                     ),
                                   ]),
-                                  if (tutor.reviews.isEmpty)
+                                  if (_tutor.reviews.isEmpty)
                                     Text(
                                       "Không có đánh giá",
                                       style: TextStyle(
@@ -77,9 +113,9 @@ class TutorDetailPage extends StatelessWidget {
                                   else
                                     Row(
                                       children: [
-                                        RatingBar(rating: tutor.rating),
+                                        RatingBar(rating: _tutor.rating),
                                         Text(
-                                          "(${tutor.reviews.length})",
+                                          "(${_tutor.reviews.length})",
                                           style: TextStyle(
                                               color: Colors.grey.shade600,
                                               fontStyle: FontStyle.italic),
@@ -94,7 +130,7 @@ class TutorDetailPage extends StatelessWidget {
                           SizedBox(
                             width: 500,
                             child: Text(
-                              tutor.description,
+                              _tutor.description,
                               style: TextStyle(
                                   color: Colors.grey.shade600, fontSize: 13),
                             ),
@@ -141,11 +177,14 @@ class TutorDetailPage extends StatelessWidget {
                           ])
                         ],
                       ),
+                      // Video player
                       Container(
                         width: 500,
                         height: 300,
                         color: Colors.grey,
-                        child: const Center(child: Text("Video player")),
+                        child: JkVideoControlPanel(
+                          _videoController,
+                        ),
                       ),
                     ],
                   ),
@@ -167,7 +206,7 @@ class TutorDetailPage extends StatelessWidget {
                                 const Gap(10),
                                 Container(
                                     margin: const EdgeInsets.only(left: 10),
-                                    child: Text(tutor.education)),
+                                    child: Text(_tutor.education)),
                               ],
                             ),
                             const Gap(30),
@@ -184,7 +223,7 @@ class TutorDetailPage extends StatelessWidget {
                                     direction: Axis.horizontal,
                                     spacing: 10,
                                     children: List<Widget>.generate(
-                                      tutor.languages.length,
+                                      _tutor.languages.length,
                                       (index) => Chip(
                                         backgroundColor:
                                             Colors.grey.withOpacity(0.2),
@@ -198,7 +237,7 @@ class TutorDetailPage extends StatelessWidget {
                                                 .primary
                                                 .withOpacity(0.1)),
                                         label: Text(
-                                          tutor.languages[index],
+                                          _tutor.languages[index],
                                           style: TextStyle(
                                               color: Theme.of(context)
                                                   .colorScheme
@@ -225,7 +264,7 @@ class TutorDetailPage extends StatelessWidget {
                                     spacing: 10,
                                     runSpacing: 10,
                                     children: List<Widget>.generate(
-                                      tutor.specializations.length,
+                                      _tutor.specializations.length,
                                       (index) => Chip(
                                         backgroundColor:
                                             Colors.grey.withOpacity(0.2),
@@ -239,7 +278,7 @@ class TutorDetailPage extends StatelessWidget {
                                                 .primary
                                                 .withOpacity(0.1)),
                                         label: Text(
-                                          tutor.specializations[index],
+                                          _tutor.specializations[index],
                                           style: TextStyle(
                                               color: Theme.of(context)
                                                   .colorScheme
@@ -306,7 +345,7 @@ class TutorDetailPage extends StatelessWidget {
                                 const Gap(10),
                                 Container(
                                     margin: const EdgeInsets.only(left: 10),
-                                    child: Text(tutor.hobbies)),
+                                    child: Text(_tutor.hobbies)),
                               ],
                             ),
                             const Gap(30),
@@ -319,7 +358,7 @@ class TutorDetailPage extends StatelessWidget {
                                 const Gap(10),
                                 Container(
                                     margin: const EdgeInsets.only(left: 10),
-                                    child: Text(tutor.experience)),
+                                    child: Text(_tutor.experience)),
                               ],
                             ),
                             const Gap(30),
@@ -330,7 +369,7 @@ class TutorDetailPage extends StatelessWidget {
                                 const Text("Người khác đánh giá",
                                     style: TextStyle(fontSize: 16)),
                                 const Gap(10),
-                                if (tutor.reviews.isEmpty)
+                                if (_tutor.reviews.isEmpty)
                                   Text(
                                     "Không có đánh giá",
                                     style: TextStyle(
@@ -342,7 +381,7 @@ class TutorDetailPage extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: List<Widget>.generate(
-                                      tutor.reviews.length,
+                                      _tutor.reviews.length,
                                       (index) => Row(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -359,7 +398,7 @@ class TutorDetailPage extends StatelessWidget {
                                               Row(
                                                 children: [
                                                   Text(
-                                                      tutor.reviews[index]
+                                                      _tutor.reviews[index]
                                                           .author.email,
                                                       style: Theme.of(context)
                                                           .textTheme
@@ -369,7 +408,7 @@ class TutorDetailPage extends StatelessWidget {
                                                   const Gap(10),
                                                   Text(
                                                       DateFormat.yMd().format(
-                                                          tutor.reviews[index]
+                                                          _tutor.reviews[index]
                                                               .date),
                                                       style: TextStyle(
                                                           color: Colors
@@ -378,12 +417,12 @@ class TutorDetailPage extends StatelessWidget {
                                                 ],
                                               ),
                                               RatingBar(
-                                                  rating: tutor
+                                                  rating: _tutor
                                                       .reviews[index].rating),
                                               SizedBox(
                                                 width: 300,
                                                 child: Text(
-                                                  tutor.reviews[index].content,
+                                                  _tutor.reviews[index].content,
                                                   softWrap: true,
                                                   maxLines: 3,
                                                   style: const TextStyle(

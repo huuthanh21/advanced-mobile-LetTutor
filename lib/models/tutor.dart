@@ -6,7 +6,8 @@ class Tutor {
   final String id = faker.guid.guid();
   final String name;
   final String profilePictureUrl;
-  // final String videoUrl = "https://www.youtube.com/watch?v=7oKjW1OIjuw";
+  final Uri videoUrl = Uri.parse(
+      "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4");
   final String description;
   final String countryCode;
   final String education;

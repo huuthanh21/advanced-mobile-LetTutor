@@ -1,11 +1,16 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:video_player_win/video_player_win_plugin.dart';
 
 import 'common/providers/data_provider.dart';
 import 'core/app_router.dart';
 import 'core/providers/login_provider.dart';
 
 void main() {
+  if (!kIsWeb && Platform.isWindows) WindowsVideoPlayer.registerWith();
   runApp(const MyApp());
 }
 
