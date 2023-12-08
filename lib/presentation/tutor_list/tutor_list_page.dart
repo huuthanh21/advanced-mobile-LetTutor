@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lettutor/presentation/tutor_list/providers/favorite_tutors_provider.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,11 @@ class _TutorListPageState extends State<TutorListPage> {
   final _tutorNameController = TextEditingController();
   final _focusNode = FocusNode();
 
-  late final List<String> _tutorCountryFilters;
+  final List<String> _tutorCountryFilters = [
+    "Gia sư Nước Ngoài",
+    "Gia sư Việt Nam",
+    "Gia sư Tiếng Anh bản ngữ"
+  ];
 
   late List<int> _selectedTutorCountryFilters;
   final List<String> _tutorSpecializationFilters = [
@@ -43,11 +48,7 @@ class _TutorListPageState extends State<TutorListPage> {
     super.initState();
     _tutorDataProvider = Provider.of<TutorDataProvider>(context, listen: false);
     _displayedTutors = _tutorDataProvider.tutors;
-    _tutorCountryFilters = [
-      "Gia sư Nước Ngoài",
-      "Gia sư Việt Nam",
-      "Gia sư Tiếng Anh bản ngữ"
-    ];
+
     _selectedTutorCountryFilters = [];
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
@@ -303,19 +304,22 @@ class _TutorListPageState extends State<TutorListPage> {
                           .titleLarge!
                           .copyWith(fontSize: 28)),
                   const Gap(10),
-                  GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
+                  ChangeNotifierProvider(
+                    create: (_) => FavoriteTutorsProvider(),
+                    child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 10,
+                        crossAxisSpacing: 10,
+                      ),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: _displayedTutors.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return TutorCard(tutor: _displayedTutors[index]);
+                      },
                     ),
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: _displayedTutors.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return TutorCard(tutor: _displayedTutors[index]);
-                    },
                   ),
                   if (_displayedTutors.isEmpty)
                     const SizedBox(
