@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:lettutor/presentation/tutor_list/providers/favorite_tutors_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player_win/video_player_win_plugin.dart';
 
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         Provider(create: (_) => LoginProvider()),
         Provider(create: (_) => TutorDataProvider()),
         Provider(create: (_) => BookingDataProvider()),
+        ChangeNotifierProvider(create: (_) => FavoriteTutorsProvider()),
       ],
       child: MaterialApp.router(
         title: 'Flutter Demo',

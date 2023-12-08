@@ -23,6 +23,7 @@ class TutorListPage extends StatefulWidget {
 class _TutorListPageState extends State<TutorListPage> {
   late TutorDataProvider _tutorDataProvider;
   late List<Tutor> _displayedTutors;
+  late FavoriteTutorsProvider _favoriteTutorsProvider;
 
   final _tutorNameController = TextEditingController();
   final _focusNode = FocusNode();
@@ -48,6 +49,8 @@ class _TutorListPageState extends State<TutorListPage> {
     super.initState();
     _tutorDataProvider = Provider.of<TutorDataProvider>(context, listen: false);
     _displayedTutors = _tutorDataProvider.tutors;
+    _favoriteTutorsProvider =
+        Provider.of<FavoriteTutorsProvider>(context, listen: false);
 
     _selectedTutorCountryFilters = [];
     _focusNode.addListener(() {
@@ -304,22 +307,24 @@ class _TutorListPageState extends State<TutorListPage> {
                           .titleLarge!
                           .copyWith(fontSize: 28)),
                   const Gap(10),
-                  ChangeNotifierProvider(
-                    create: (_) => FavoriteTutorsProvider(),
-                    child: GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
-                      ),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: _displayedTutors.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return TutorCard(tutor: _displayedTutors[index]);
-                      },
-                    ),
+                  Consumer<FavoriteTutorsProvider>(
+                    builder: (context, value, child) {
+                      _displayedTutors = getFilteredTutors();
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                        ),
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: _displayedTutors.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return TutorCard(tutor: _displayedTutors[index]);
+                        },
+                      );
+                    },
                   ),
                   if (_displayedTutors.isEmpty)
                     const SizedBox(
@@ -400,7 +405,25 @@ class _TutorListPageState extends State<TutorListPage> {
               (tutor) => tutor.specializations.contains(selectedSpecialization))
           .toList();
     }
+
+    sortTutorsByFavorite(filteredTutors);
+
     return filteredTutors;
+  }
+
+  void sortTutorsByFavorite(List<Tutor> tutors) {
+    tutors.sort((a, b) {
+      bool aIsFavorite = _favoriteTutorsProvider.isFavorite(a.id);
+      bool bIsFavorite = _favoriteTutorsProvider.isFavorite(b.id);
+
+      if (aIsFavorite && !bIsFavorite) {
+        return -1;
+      } else if (!aIsFavorite && bIsFavorite) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
   }
 
   @override
