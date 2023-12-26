@@ -25,8 +25,7 @@ class TutorDetailPage extends StatefulWidget {
 }
 
 class _TutorDetailPageState extends State<TutorDetailPage> {
-  late final TutorDataProvider _tutorDataProvider =
-      context.read<TutorDataProvider>();
+  late final TutorDataProvider _tutorDataProvider = context.read<TutorDataProvider>();
 
   late VideoPlayerController _videoController;
   late Tutor _tutor;
@@ -45,9 +44,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
     var now = DateTime.now();
     _selectedDate = now;
     _dateController.text = DateFormat.yMd().format(now);
-    _schedules = _tutor.schedules
-        .where((schedule) => schedule.dateTime.isAfter(now))
-        .toList();
+    _schedules = _tutor.schedules.where((schedule) => schedule.dateTime.isAfter(now)).toList();
     _updateDisplayedSchedules();
   }
 
@@ -121,8 +118,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                                 height: 120,
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(100),
-                                  child:
-                                      Image.network(_tutor.profilePictureUrl),
+                                  child: Image.network(_tutor.profilePictureUrl),
                                 ),
                               ),
                               const Gap(20),
@@ -135,24 +131,19 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                                           .titleLarge!
                                           .copyWith(fontSize: 22)),
                                   Row(children: [
-                                    CountryFlag.fromCountryCode(
-                                        _tutor.countryCode,
-                                        width: 20,
-                                        height: 20),
+                                    CountryFlag.fromCountryCode(_tutor.countryCode,
+                                        width: 20, height: 20),
                                     const Gap(5),
                                     Text(
-                                      CountryMapper.countryCodeToName(
-                                          _tutor.countryCode),
-                                      style: TextStyle(
-                                          color: Colors.grey.shade600),
+                                      CountryMapper.countryCodeToName(_tutor.countryCode),
+                                      style: TextStyle(color: Colors.grey.shade600),
                                     ),
                                   ]),
                                   if (_tutor.reviews.isEmpty)
                                     Text(
                                       "Không có đánh giá",
                                       style: TextStyle(
-                                          color: Colors.grey.shade600,
-                                          fontStyle: FontStyle.italic),
+                                          color: Colors.grey.shade600, fontStyle: FontStyle.italic),
                                     )
                                   else
                                     Row(
@@ -175,8 +166,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                             width: 500,
                             child: Text(
                               _tutor.description,
-                              style: TextStyle(
-                                  color: Colors.grey.shade600, fontSize: 13),
+                              style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                             ),
                           ),
                           const Gap(20),
@@ -186,16 +176,11 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                                 IconButton(
                                   onPressed: () {},
                                   icon: Icon(Icons.favorite_border_outlined,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
+                                      color: Theme.of(context).colorScheme.primary),
                                 ),
                                 Text(
                                   "Đánh giá",
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
+                                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
                                 )
                               ],
                             ),
@@ -205,16 +190,11 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                                 IconButton(
                                   onPressed: () {},
                                   icon: Icon(Icons.report_outlined,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
+                                      color: Theme.of(context).colorScheme.primary),
                                 ),
                                 Text(
                                   "Đánh giá",
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
+                                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
                                 )
                               ],
                             ),
@@ -246,8 +226,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Học vấn",
-                                    style: TextStyle(fontSize: 16)),
+                                const Text("Học vấn", style: TextStyle(fontSize: 16)),
                                 const Gap(10),
                                 Container(
                                     margin: const EdgeInsets.only(left: 10),
@@ -259,8 +238,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Ngôn ngữ",
-                                    style: TextStyle(fontSize: 16)),
+                                const Text("Ngôn ngữ", style: TextStyle(fontSize: 16)),
                                 const Gap(10),
                                 Container(
                                   margin: const EdgeInsets.only(left: 10),
@@ -270,23 +248,16 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                                     children: List<Widget>.generate(
                                       _tutor.languages.length,
                                       (index) => Chip(
-                                        backgroundColor:
-                                            Colors.grey.withOpacity(0.2),
+                                        backgroundColor: Colors.grey.withOpacity(0.2),
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20)),
+                                            borderRadius: BorderRadius.circular(20)),
                                         side: BorderSide.none,
-                                        color: MaterialStateColor.resolveWith(
-                                            (_) => Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                                .withOpacity(0.1)),
+                                        color: MaterialStateColor.resolveWith((_) =>
+                                            Theme.of(context).colorScheme.primary.withOpacity(0.1)),
                                         label: Text(
                                           _tutor.languages[index],
                                           style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary),
+                                              color: Theme.of(context).colorScheme.primary),
                                         ),
                                       ),
                                     ),
@@ -299,8 +270,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Chuyên ngành",
-                                    style: TextStyle(fontSize: 16)),
+                                const Text("Chuyên ngành", style: TextStyle(fontSize: 16)),
                                 const Gap(10),
                                 Container(
                                   margin: const EdgeInsets.only(left: 10),
@@ -311,23 +281,16 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                                     children: List<Widget>.generate(
                                       _tutor.specializations.length,
                                       (index) => Chip(
-                                        backgroundColor:
-                                            Colors.grey.withOpacity(0.2),
+                                        backgroundColor: Colors.grey.withOpacity(0.2),
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20)),
+                                            borderRadius: BorderRadius.circular(20)),
                                         side: BorderSide.none,
-                                        color: MaterialStateColor.resolveWith(
-                                            (_) => Theme.of(context)
-                                                .colorScheme
-                                                .primary
-                                                .withOpacity(0.1)),
+                                        color: MaterialStateColor.resolveWith((_) =>
+                                            Theme.of(context).colorScheme.primary.withOpacity(0.1)),
                                         label: Text(
                                           _tutor.specializations[index],
                                           style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary),
+                                              color: Theme.of(context).colorScheme.primary),
                                         ),
                                       ),
                                     ),
@@ -340,38 +303,32 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Khóa học tham khảo",
-                                    style: TextStyle(fontSize: 16)),
+                                const Text("Khóa học tham khảo", style: TextStyle(fontSize: 16)),
                                 const Gap(10),
                                 Container(
                                   margin: const EdgeInsets.only(left: 10),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
-                                          const Text(
-                                              "Basic Conversation Topics: "),
+                                          const Text("Basic Conversation Topics: "),
                                           InkWell(
                                               onTap: () {},
                                               child: const Text(
                                                 "Tìm hiểu",
-                                                style: TextStyle(
-                                                    color: Colors.blue),
+                                                style: TextStyle(color: Colors.blue),
                                               ))
                                         ],
                                       ),
                                       Row(
                                         children: [
-                                          const Text(
-                                              "Basic Conversation Topics: "),
+                                          const Text("Basic Conversation Topics: "),
                                           InkWell(
                                               onTap: () {},
                                               child: const Text(
                                                 "Tìm hiểu",
-                                                style: TextStyle(
-                                                    color: Colors.blue),
+                                                style: TextStyle(color: Colors.blue),
                                               ))
                                         ],
                                       ),
@@ -385,8 +342,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Sở thích",
-                                    style: TextStyle(fontSize: 16)),
+                                const Text("Sở thích", style: TextStyle(fontSize: 16)),
                                 const Gap(10),
                                 Container(
                                     margin: const EdgeInsets.only(left: 10),
@@ -398,8 +354,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Kinh nghiệm giảng dạy",
-                                    style: TextStyle(fontSize: 16)),
+                                const Text("Kinh nghiệm giảng dạy", style: TextStyle(fontSize: 16)),
                                 const Gap(10),
                                 Container(
                                     margin: const EdgeInsets.only(left: 10),
@@ -411,67 +366,53 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("Người khác đánh giá",
-                                    style: TextStyle(fontSize: 16)),
+                                const Text("Người khác đánh giá", style: TextStyle(fontSize: 16)),
                                 const Gap(10),
                                 if (_tutor.reviews.isEmpty)
                                   Text(
                                     "Không có đánh giá",
                                     style: TextStyle(
-                                        color: Colors.grey.shade600,
-                                        fontStyle: FontStyle.italic),
+                                        color: Colors.grey.shade600, fontStyle: FontStyle.italic),
                                   )
                                 else
                                   Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: List<Widget>.generate(
                                       _tutor.reviews.length,
                                       (index) => Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           const SizedBox(
                                               width: 50,
                                               height: 50,
-                                              child:
-                                                  Icon(Icons.person, size: 50)),
+                                              child: Icon(Icons.person, size: 50)),
                                           Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Row(
                                                 children: [
-                                                  Text(
-                                                      _tutor.reviews[index]
-                                                          .author.email,
+                                                  Text(_tutor.reviews[index].author.email,
                                                       style: Theme.of(context)
                                                           .textTheme
                                                           .headlineLarge!
-                                                          .copyWith(
-                                                              fontSize: 14)),
+                                                          .copyWith(fontSize: 14)),
                                                   const Gap(10),
                                                   Text(
-                                                      DateFormat.yMd().format(
-                                                          _tutor.reviews[index]
-                                                              .date),
+                                                      DateFormat.yMd()
+                                                          .format(_tutor.reviews[index].date),
                                                       style: TextStyle(
-                                                          color: Colors
-                                                              .grey.shade600,
+                                                          color: Colors.grey.shade600,
                                                           fontSize: 13)),
                                                 ],
                                               ),
-                                              RatingBar(
-                                                  rating: _tutor
-                                                      .reviews[index].rating),
+                                              RatingBar(rating: _tutor.reviews[index].rating),
                                               SizedBox(
                                                 width: 300,
                                                 child: Text(
                                                   _tutor.reviews[index].content,
                                                   softWrap: true,
                                                   maxLines: 3,
-                                                  style: const TextStyle(
-                                                      fontSize: 13),
+                                                  style: const TextStyle(fontSize: 13),
                                                 ),
                                               ),
                                               const Gap(10),
@@ -487,102 +428,74 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                         ),
                       ),
                       Expanded(
-                          flex: 10,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              TextField(
-                                controller: _dateController,
-                                decoration: InputDecoration(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 15,
-                                    vertical: 5,
-                                  ),
-                                  hintText: "Chọn một ngày",
-                                  suffixIcon: Icon(
-                                    Icons.calendar_today_outlined,
-                                    color: Colors.grey.shade400,
-                                    size: 16,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    borderSide: const BorderSide(
-                                      color: Colors.grey,
-                                      width: 1,
-                                    ),
-                                  ),
+                        flex: 10,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            TextField(
+                              controller: _dateController,
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                                hintText: "Chọn một ngày",
+                                suffixIcon: Icon(
+                                  Icons.calendar_today_outlined,
+                                  color: Colors.grey.shade400,
+                                  size: 16,
                                 ),
-                                onTap: _showDatePicker,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: const BorderSide(color: Colors.grey, width: 1),
+                                ),
                               ),
-                              const Gap(20),
-                              Column(
-                                  children: List.generate(
-                                      _displayedSchedules.length,
-                                      (index) => Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 100,
-                                                    child: Text(
-                                                      DateFormat.Hm().format(
-                                                          _displayedSchedules[
-                                                                  index]
-                                                              .dateTime),
-                                                      style: TextStyle(
-                                                        color:
-                                                            _displayedSchedules[
-                                                                        index]
-                                                                    .isBooked
-                                                                ? Colors.grey
-                                                                    .shade600
-                                                                : Colors.black,
-                                                        fontSize: 16,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const Gap(10),
-                                                  if (_displayedSchedules[index]
-                                                      .isBooked)
-                                                    const Text("Đã đặt",
-                                                        style: TextStyle(
-                                                            color: Colors.grey))
-                                                  else
-                                                    ElevatedButton(
-                                                      onPressed: () {},
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        backgroundColor:
-                                                            Theme.of(context)
-                                                                .colorScheme
-                                                                .primary,
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(20),
-                                                        ),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal: 30,
-                                                          vertical: 10,
-                                                        ),
-                                                      ),
-                                                      child: const Text(
-                                                        "Đặt",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    )
-                                                ],
-                                              ),
-                                              const Gap(10),
-                                            ],
-                                          ))),
-                            ],
-                          )),
+                              onTap: _showDatePicker,
+                            ),
+                            const Gap(20),
+                            Column(
+                              children: List.generate(
+                                _displayedSchedules.length,
+                                (index) => Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                            width: 100,
+                                            child: Text(
+                                              DateFormat.Hm()
+                                                  .format(_displayedSchedules[index].dateTime),
+                                              style: TextStyle(
+                                                  color: _displayedSchedules[index].isBooked
+                                                      ? Colors.grey.shade600
+                                                      : Colors.black,
+                                                  fontSize: 16),
+                                            )),
+                                        const Gap(10),
+                                        if (_displayedSchedules[index].isBooked)
+                                          const Text("Đã đặt", style: TextStyle(color: Colors.grey))
+                                        else
+                                          ElevatedButton(
+                                            onPressed: () {},
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Theme.of(context).colorScheme.primary,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(20)),
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 30, vertical: 10),
+                                            ),
+                                            child: const Text("Đặt",
+                                                style: TextStyle(color: Colors.white)),
+                                          )
+                                      ],
+                                    ),
+                                    const Gap(10),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ],
