@@ -93,6 +93,13 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
     }
   }
 
+  void bookSchedule(Schedule schedule) {
+    setState(() {
+      schedule.isBooked = true;
+      _updateDisplayedSchedules();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -474,7 +481,8 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                                           const Text("Đã đặt", style: TextStyle(color: Colors.grey))
                                         else
                                           ElevatedButton(
-                                            onPressed: () {},
+                                            onPressed: () =>
+                                                bookSchedule(_displayedSchedules[index]),
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:
                                                   Theme.of(context).colorScheme.primary,
