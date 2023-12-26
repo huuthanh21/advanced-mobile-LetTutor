@@ -32,9 +32,9 @@ class _TutorCardState extends State<TutorCard> {
   @override
   Widget build(BuildContext context) {
     return Consumer<FavoriteTutorsProvider>(
-      builder: (BuildContext context,
-              FavoriteTutorsProvider favoriteTutorsProvider, Widget? child) =>
-          Container(
+      builder:
+          (BuildContext context, FavoriteTutorsProvider favoriteTutorsProvider, Widget? child) =>
+              Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.white,
@@ -74,24 +74,19 @@ class _TutorCardState extends State<TutorCard> {
                         children: [
                           InkWell(
                             onTap: () => context.push(
-                              context.namedLocation("tutor",
-                                  pathParameters: {"tid": widget.tutor.id}),
+                              context
+                                  .namedLocation("tutor", pathParameters: {"tid": widget.tutor.id}),
                             ),
                             child: Text(widget.tutor.name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(fontSize: 22)),
+                                style:
+                                    Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 22)),
                           ),
                           Row(children: [
-                            CountryFlag.fromCountryCode(
-                                widget.tutor.countryCode,
-                                width: 20,
-                                height: 20),
+                            CountryFlag.fromCountryCode(widget.tutor.countryCode,
+                                width: 20, height: 20),
                             const Gap(5),
                             Text(
-                              CountryMapper.countryCodeToName(
-                                  widget.tutor.countryCode),
+                              CountryMapper.countryCodeToName(widget.tutor.countryCode),
                               style: TextStyle(color: Colors.grey.shade600),
                             ),
                           ]),
@@ -99,8 +94,7 @@ class _TutorCardState extends State<TutorCard> {
                             Text(
                               "Không có đánh giá",
                               style: TextStyle(
-                                  color: Colors.grey.shade600,
-                                  fontStyle: FontStyle.italic),
+                                  color: Colors.grey.shade600, fontStyle: FontStyle.italic),
                             )
                           else
                             RatingBar(rating: widget.tutor.rating),
@@ -112,8 +106,8 @@ class _TutorCardState extends State<TutorCard> {
                     IconButton(
                         onPressed: () {
                           log("Remove favorite tutor ${widget.tutor.id}");
-                          setState(() => favoriteTutorsProvider
-                              .removeFavoriteTutor(widget.tutor.id));
+                          setState(
+                              () => favoriteTutorsProvider.removeFavoriteTutor(widget.tutor.id));
                         },
                         icon: const Icon(
                           Icons.favorite,
@@ -123,8 +117,7 @@ class _TutorCardState extends State<TutorCard> {
                     IconButton(
                         onPressed: () {
                           log("Add favorite tutor ${widget.tutor.id}");
-                          setState(() => favoriteTutorsProvider
-                              .addFavoriteTutor(widget.tutor.id));
+                          setState(() => favoriteTutorsProvider.addFavoriteTutor(widget.tutor.id));
                         },
                         icon: const Icon(
                           Icons.favorite_border,
@@ -149,8 +142,7 @@ class _TutorCardState extends State<TutorCard> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
-                      child: Text(specialization,
-                          style: TextStyle(color: Colors.grey.shade800)),
+                      child: Text(specialization, style: TextStyle(color: Colors.grey.shade800)),
                     ),
                 ],
               ),
@@ -172,7 +164,8 @@ class _TutorCardState extends State<TutorCard> {
               child: Align(
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(
-                    onPressed: () {},
+                    onPressed: () => context.push(
+                        context.namedLocation("tutor", pathParameters: {"tid": widget.tutor.id})),
                     style: TextButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -181,8 +174,7 @@ class _TutorCardState extends State<TutorCard> {
                         color: Theme.of(context).colorScheme.primary,
                         width: 1,
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                     ),
                     icon: const Icon(Icons.calendar_month_outlined),
                     label: const Text("Đặt lịch")),
