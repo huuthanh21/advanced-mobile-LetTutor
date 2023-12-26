@@ -20,6 +20,13 @@ class TutorDataProvider {
   Tutor getTutorById(String id) {
     return _tutors.firstWhere((tutor) => tutor.id == id);
   }
+
+  void bookTutor(String tutorId, DateTime dateTime) {
+    Tutor tutor = getTutorById(tutorId);
+    tutor.schedules
+        .firstWhere((schedule) => schedule.dateTime == dateTime)
+        .isBooked = true;
+  }
 }
 
 class BookingDataProvider {

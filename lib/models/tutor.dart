@@ -164,6 +164,11 @@ class Schedule {
   bool isBooked = false;
 
   Schedule(this.dateTime);
+
+  @override
+  String toString() {
+    return "Schedule: $dateTime - ${isBooked ? "Booked" : "Available"}}";
+  }
 }
 
 class Review {

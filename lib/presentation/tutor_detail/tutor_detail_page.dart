@@ -31,11 +31,33 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
   late VideoPlayerController _videoController;
   late Tutor _tutor;
 
+  DateTime? _selectedDate;
+  List<Schedule> _schedules = [];
+  List<Schedule> _displayedSchedules = [];
+  final TextEditingController _dateController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _tutor = _tutorDataProvider.getTutorById(widget.tutorId);
     _initVideoPlayer();
+
+    var now = DateTime.now();
+    _selectedDate = now;
+    _dateController.text = DateFormat.yMd().format(now);
+    _schedules = _tutor.schedules
+        .where((schedule) => schedule.dateTime.isAfter(now))
+        .toList();
+    _updateDisplayedSchedules();
+  }
+
+  void _updateDisplayedSchedules() {
+    _displayedSchedules = _schedules
+        .where((schedule) =>
+            schedule.dateTime.day == _selectedDate!.day &&
+            schedule.dateTime.month == _selectedDate!.month &&
+            schedule.dateTime.year == _selectedDate!.year)
+        .toList();
   }
 
   void _initVideoPlayer() {
@@ -45,7 +67,6 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
         log("Video player failed to initialize");
         return;
       }
-      _videoController.play();
       setState(() {});
     }).catchError((e) {
       log("Video player failed to initialize: $e");
@@ -56,6 +77,23 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
   void dispose() {
     super.dispose();
     _videoController.dispose();
+  }
+
+  Future<void> _showDatePicker() async {
+    final now = DateTime.now();
+    final value = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? now,
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 7)),
+    );
+    if (value != null) {
+      setState(() {
+        _selectedDate = value;
+        _dateController.text = DateFormat.yMd().format(value);
+        _updateDisplayedSchedules();
+      });
+    }
   }
 
   @override
@@ -197,6 +235,7 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                   const Gap(50),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         flex: 9,
@@ -448,11 +487,101 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                         ),
                       ),
                       Expanded(
-                          flex: 15,
-                          child: Container(
-                            color: Colors.grey,
-                            height: 500,
-                            child: const Center(child: Text("Calendar")),
+                          flex: 10,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              TextField(
+                                controller: _dateController,
+                                decoration: InputDecoration(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 15,
+                                    vertical: 5,
+                                  ),
+                                  hintText: "Chọn một ngày",
+                                  suffixIcon: Icon(
+                                    Icons.calendar_today_outlined,
+                                    color: Colors.grey.shade400,
+                                    size: 16,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                    borderSide: const BorderSide(
+                                      color: Colors.grey,
+                                      width: 1,
+                                    ),
+                                  ),
+                                ),
+                                onTap: _showDatePicker,
+                              ),
+                              const Gap(20),
+                              Column(
+                                  children: List.generate(
+                                      _displayedSchedules.length,
+                                      (index) => Column(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  SizedBox(
+                                                    width: 100,
+                                                    child: Text(
+                                                      DateFormat.Hm().format(
+                                                          _displayedSchedules[
+                                                                  index]
+                                                              .dateTime),
+                                                      style: TextStyle(
+                                                        color:
+                                                            _displayedSchedules[
+                                                                        index]
+                                                                    .isBooked
+                                                                ? Colors.grey
+                                                                    .shade600
+                                                                : Colors.black,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const Gap(10),
+                                                  if (_displayedSchedules[index]
+                                                      .isBooked)
+                                                    const Text("Đã đặt",
+                                                        style: TextStyle(
+                                                            color: Colors.grey))
+                                                  else
+                                                    ElevatedButton(
+                                                      onPressed: () {},
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Theme.of(context)
+                                                                .colorScheme
+                                                                .primary,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(20),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 30,
+                                                          vertical: 10,
+                                                        ),
+                                                      ),
+                                                      child: const Text(
+                                                        "Đặt",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    )
+                                                ],
+                                              ),
+                                              const Gap(10),
+                                            ],
+                                          ))),
+                            ],
                           )),
                     ],
                   ),

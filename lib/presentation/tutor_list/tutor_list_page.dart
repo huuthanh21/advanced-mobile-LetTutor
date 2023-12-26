@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import 'package:lettutor/presentation/tutor_list/providers/favorite_tutors_provider.dart';
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +9,10 @@ import 'package:provider/provider.dart';
 import '../../common/providers/data_provider.dart';
 import '../../common/widgets/footer.dart';
 import '../../common/widgets/top_app_bar.dart';
+import '../../core/providers/login_provider.dart';
 import '../../models/tutor.dart';
 import 'components/tutor_card.dart';
+import 'providers/favorite_tutors_provider.dart';
 
 class TutorListPage extends StatefulWidget {
   const TutorListPage({super.key});
@@ -24,6 +25,8 @@ class _TutorListPageState extends State<TutorListPage> {
   late TutorDataProvider _tutorDataProvider;
   late List<Tutor> _displayedTutors;
   late FavoriteTutorsProvider _favoriteTutorsProvider;
+  late BookingDataProvider _bookingDataProvider;
+  late LoginProvider _loginProvider;
 
   final _tutorNameController = TextEditingController();
   final _focusNode = FocusNode();
@@ -51,6 +54,16 @@ class _TutorListPageState extends State<TutorListPage> {
     _displayedTutors = _tutorDataProvider.tutors;
     _favoriteTutorsProvider =
         Provider.of<FavoriteTutorsProvider>(context, listen: false);
+    _loginProvider = Provider.of<LoginProvider>(context, listen: false);
+    _bookingDataProvider =
+        Provider.of<BookingDataProvider>(context, listen: false);
+
+    // Development only
+    var users = _loginProvider.users;
+    _bookingDataProvider.generateRandomData(users, _tutorDataProvider.tutors);
+    for (var booking in _bookingDataProvider.bookings) {
+      _tutorDataProvider.bookTutor(booking.tutor.id, booking.dateTime);
+    }
 
     _selectedTutorCountryFilters = [];
     _focusNode.addListener(() {
