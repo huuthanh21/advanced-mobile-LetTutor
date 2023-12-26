@@ -10,18 +10,75 @@ import 'package:provider/provider.dart';
 import '../../common/utils/country_mapper.dart';
 import '../../common/widgets/footer.dart';
 import '../../core/providers/login_provider.dart';
+import '../../models/booking.dart';
 
-class SchedulePage extends StatelessWidget {
+class SchedulePage extends StatefulWidget {
   const SchedulePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Providers
-    var bookingDataProvider = context.read<BookingDataProvider>();
-    var loginProvider = context.read<LoginProvider>();
+  State<SchedulePage> createState() => _SchedulePageState();
+}
 
-    var user = loginProvider.user;
-    var bookings = bookingDataProvider.getBookingsByUser(user);
+class _SchedulePageState extends State<SchedulePage> {
+  late LoginProvider _loginProvider;
+  late BookingDataProvider _bookingDataProvider;
+  late TutorDataProvider _tutorDataProvider;
+  late List<Booking> _bookings;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Providers
+    _loginProvider = context.read<LoginProvider>();
+    _bookingDataProvider = context.read<BookingDataProvider>();
+    _tutorDataProvider = context.read<TutorDataProvider>();
+
+    _bookings = context.read<BookingDataProvider>().getBookingsByUser(_loginProvider.user);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Future<void> showCancelDialog(BuildContext context, Booking booking) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Hủy buổi học'),
+            content: const SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('Bạn có chắc chắn muốn hủy buổi học này?'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Hủy'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: const Text('Xác nhận'),
+                onPressed: () {
+                  // Update in provider
+                  _bookingDataProvider.cancelBooking(booking);
+                  _tutorDataProvider.cancelBooking(booking.tutor.id, booking.dateTime);
+
+                  // Update local state
+                  setState(() {
+                    _bookings.remove(booking);
+                  });
+
+                  // Close dialog
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
 
     return Scaffold(
       appBar: TopAppBar(isLoggedIn: true),
@@ -79,7 +136,7 @@ class SchedulePage extends StatelessWidget {
                   const Gap(20),
                   Column(
                     children: List<Widget>.generate(
-                      bookings.length,
+                      _bookings.length,
                       (index) => Container(
                         color: Colors.grey[200],
                         padding: const EdgeInsets.all(15),
@@ -93,7 +150,7 @@ class SchedulePage extends StatelessWidget {
                               children: [
                                 Text(
                                   DateFormat('EEE, dd MMM yy', 'vi_VN')
-                                      .format(bookings[index].dateTime),
+                                      .format(_bookings[index].dateTime),
                                   style: const TextStyle(
                                     fontFamily: 'Poppins',
                                     fontSize: 26,
@@ -117,46 +174,39 @@ class SchedulePage extends StatelessWidget {
                                   height: 40,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(40),
-                                    child: Image.network(bookings[index]
-                                        .tutor
-                                        .profilePictureUrl),
+                                    child: Image.network(_bookings[index].tutor.profilePictureUrl),
                                   ),
                                 ),
                                 const Gap(10),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(bookings[index].tutor.name,
+                                    Text(_bookings[index].tutor.name,
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleLarge!
                                             .copyWith(fontSize: 22)),
                                     Row(children: [
                                       CountryFlag.fromCountryCode(
-                                          bookings[index].tutor.countryCode,
+                                          _bookings[index].tutor.countryCode,
                                           width: 20,
                                           height: 20),
                                       const Gap(5),
                                       Text(
                                         CountryMapper.countryCodeToName(
-                                            bookings[index].tutor.countryCode),
-                                        style: TextStyle(
-                                            color: Colors.grey.shade600),
+                                            _bookings[index].tutor.countryCode),
+                                        style: TextStyle(color: Colors.grey.shade600),
                                       ),
                                     ]),
                                     TextButton.icon(
                                         onPressed: () {},
-                                        icon:
-                                            const Icon(Icons.message_outlined),
+                                        icon: const Icon(Icons.message_outlined),
                                         label: const Text("Nhắn tin"),
                                         style: ButtonStyle(
-                                          padding:
-                                              MaterialStateProperty.resolveWith(
-                                                  (states) => EdgeInsets.zero),
-                                          overlayColor:
-                                              MaterialStateProperty.resolveWith(
-                                                  (states) =>
-                                                      Colors.transparent),
+                                          padding: MaterialStateProperty.resolveWith(
+                                              (states) => EdgeInsets.zero),
+                                          overlayColor: MaterialStateProperty.resolveWith(
+                                              (states) => Colors.transparent),
                                         )),
                                   ],
                                 )
@@ -170,17 +220,14 @@ class SchedulePage extends StatelessWidget {
                                   padding: const EdgeInsets.all(20),
                                   color: Colors.white,
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           // Text and cancel button
                                           Text(
-                                            formatDateTimeToTimeRange(
-                                                bookings[index].dateTime),
+                                            formatDateTimeToTimeRange(_bookings[index].dateTime),
                                             style: const TextStyle(
                                               fontFamily: 'Open Sans',
                                               fontSize: 22,
@@ -188,10 +235,9 @@ class SchedulePage extends StatelessWidget {
                                           ),
                                           // Cancel button
                                           TextButton.icon(
-                                              onPressed: () {},
-                                              icon: const Icon(
-                                                  Icons
-                                                      .cancel_presentation_outlined,
+                                              onPressed: () =>
+                                                  showCancelDialog(context, _bookings[index]),
+                                              icon: const Icon(Icons.cancel_presentation_outlined,
                                                   color: Colors.red),
                                               // red square border
                                               style: TextButton.styleFrom(
@@ -200,14 +246,12 @@ class SchedulePage extends StatelessWidget {
                                                     color: Colors.red,
                                                     width: 1,
                                                   ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
+                                                  borderRadius: BorderRadius.circular(2),
                                                 ),
                                               ),
                                               label: const Text(
                                                 'Hủy',
-                                                style: TextStyle(
-                                                    color: Colors.red),
+                                                style: TextStyle(color: Colors.red),
                                               ))
                                         ],
                                       ),
@@ -220,8 +264,7 @@ class SchedulePage extends StatelessWidget {
                                           ),
                                         ),
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Container(
                                               padding: const EdgeInsets.all(5),
@@ -235,19 +278,15 @@ class SchedulePage extends StatelessWidget {
                                                 ),
                                               ),
                                               child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   const Row(
                                                     children: [
-                                                      Icon(Icons
-                                                          .arrow_drop_down),
+                                                      Icon(Icons.arrow_drop_down),
                                                       Text(
                                                         'Yêu cầu cho buổi học',
                                                         style: TextStyle(
-                                                          fontFamily:
-                                                              'Open Sans',
+                                                          fontFamily: 'Open Sans',
                                                           fontSize: 16,
                                                         ),
                                                       ),
@@ -283,13 +322,12 @@ class SchedulePage extends StatelessWidget {
                                   onPressed: () {},
                                   style: TextButton.styleFrom(
                                     backgroundColor:
-                                        const Color.fromRGBO(0, 113, 240, 1)
-                                            .withOpacity(0.9),
+                                        const Color.fromRGBO(0, 113, 240, 1).withOpacity(0.9),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(2),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 20),
+                                    padding:
+                                        const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                                   ),
                                   child: const Text(
                                     'Vào buổi học',

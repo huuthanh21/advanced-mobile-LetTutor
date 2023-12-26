@@ -25,6 +25,11 @@ class TutorDataProvider {
     Tutor tutor = getTutorById(tutorId);
     tutor.schedules.firstWhere((schedule) => schedule.dateTime == dateTime).isBooked = true;
   }
+
+  void cancelBooking(String tutorId, DateTime dateTime) {
+    Tutor tutor = getTutorById(tutorId);
+    tutor.schedules.firstWhere((schedule) => schedule.dateTime == dateTime).isBooked = false;
+  }
 }
 
 class BookingDataProvider {
@@ -108,6 +113,10 @@ class BookingDataProvider {
   void addHistory(History history) {
     _histories.add(history);
     sortHistoriesByDate();
+  }
+
+  void cancelBooking(Booking booking) {
+    _bookings.remove(booking);
   }
 
   List<Booking> getBookingsByUser(User user) {
