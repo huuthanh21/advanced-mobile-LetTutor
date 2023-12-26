@@ -23,9 +23,7 @@ class TutorDataProvider {
 
   void bookTutor(String tutorId, DateTime dateTime) {
     Tutor tutor = getTutorById(tutorId);
-    tutor.schedules
-        .firstWhere((schedule) => schedule.dateTime == dateTime)
-        .isBooked = true;
+    tutor.schedules.firstWhere((schedule) => schedule.dateTime == dateTime).isBooked = true;
   }
 }
 
@@ -59,8 +57,7 @@ class BookingDataProvider {
               booking: Booking(
                   user: user,
                   tutor: tutor,
-                  dateTime:
-                      schedule.dateTime.subtract(const Duration(days: 3))),
+                  dateTime: schedule.dateTime.subtract(const Duration(days: 7))),
               completed: completed);
           if (completed && random.nextBool()) {
             history.booking.request = faker.lorem.sentence();
@@ -92,8 +89,7 @@ class BookingDataProvider {
         int scheduleIndex = random.nextInt(tutor.schedules.length);
         Schedule schedule = tutor.schedules[scheduleIndex];
         if (random.nextBool()) {
-          var booking =
-              Booking(user: user, tutor: tutor, dateTime: schedule.dateTime);
+          var booking = Booking(user: user, tutor: tutor, dateTime: schedule.dateTime);
           if (random.nextBool()) {
             booking.request = faker.lorem.sentence();
           }
@@ -115,15 +111,11 @@ class BookingDataProvider {
   }
 
   List<Booking> getBookingsByUser(User user) {
-    return _bookings
-        .where((booking) => booking.user.email == user.email)
-        .toList();
+    return _bookings.where((booking) => booking.user.email == user.email).toList();
   }
 
   List<History> getHistoriesByUser(User user) {
-    return _histories
-        .where((history) => history.booking.user.email == user.email)
-        .toList();
+    return _histories.where((history) => history.booking.user.email == user.email).toList();
   }
 
   void sortBookingsByDate() {

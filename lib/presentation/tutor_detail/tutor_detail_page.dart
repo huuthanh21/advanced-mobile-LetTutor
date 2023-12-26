@@ -4,6 +4,7 @@ import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:lettutor/core/providers/login_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_player_control_panel/video_player_control_panel.dart';
@@ -13,6 +14,7 @@ import '../../common/utils/country_mapper.dart';
 import '../../common/widgets/footer.dart';
 import '../../common/widgets/rating_bar.dart';
 import '../../common/widgets/top_app_bar.dart';
+import '../../models/booking.dart';
 import '../../models/tutor.dart';
 
 class TutorDetailPage extends StatefulWidget {
@@ -25,7 +27,9 @@ class TutorDetailPage extends StatefulWidget {
 }
 
 class _TutorDetailPageState extends State<TutorDetailPage> {
+  late final LoginProvider _loginProvider = context.read<LoginProvider>();
   late final TutorDataProvider _tutorDataProvider = context.read<TutorDataProvider>();
+  late final BookingDataProvider _bookingsProvider = context.read<BookingDataProvider>();
 
   late VideoPlayerController _videoController;
   late Tutor _tutor;
@@ -94,7 +98,24 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
   }
 
   void bookSchedule(Schedule schedule) {
+    _tutorDataProvider.bookTutor(_tutor.id, schedule.dateTime);
     setState(() {
+      // Update in tutor provider
+      _tutorDataProvider.tutors
+          .firstWhere((tutor) => tutor.id == _tutor.id)
+          .schedules
+          .firstWhere((s) => s.dateTime == schedule.dateTime)
+          .isBooked = true;
+
+      // Update in booking provider
+      var booking = Booking(
+        user: _loginProvider.user,
+        tutor: _tutor,
+        dateTime: schedule.dateTime,
+      );
+      _bookingsProvider.addBooking(booking);
+
+      // Update in local state
       schedule.isBooked = true;
       _updateDisplayedSchedules();
     });
