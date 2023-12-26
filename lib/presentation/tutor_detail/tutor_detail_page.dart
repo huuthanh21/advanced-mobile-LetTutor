@@ -459,7 +459,10 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                         flex: 10,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            // header
+                            const Gap(10),
                             TextField(
                               controller: _dateController,
                               decoration: InputDecoration(
