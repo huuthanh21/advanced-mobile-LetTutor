@@ -52,8 +52,7 @@ class CoursesPage extends StatelessWidget {
                                 padding: const EdgeInsets.only(left: 10),
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.tertiary,
+                                    color: Theme.of(context).colorScheme.tertiary,
                                     width: 1,
                                   ),
                                 ),
@@ -64,9 +63,7 @@ class CoursesPage extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         border: Border(
                                           right: BorderSide(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .tertiary,
+                                            color: Theme.of(context).colorScheme.tertiary,
                                             width: 1,
                                           ),
                                         ),
@@ -120,8 +117,7 @@ class CoursesPage extends StatelessWidget {
                                 suffixIcon: const Icon(Icons.arrow_drop_down),
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.tertiary,
+                                    color: Theme.of(context).colorScheme.tertiary,
                                     width: 1,
                                   ),
                                 ),
@@ -141,8 +137,7 @@ class CoursesPage extends StatelessWidget {
                                 suffixIcon: const Icon(Icons.arrow_drop_down),
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.tertiary,
+                                    color: Theme.of(context).colorScheme.tertiary,
                                     width: 1,
                                   ),
                                 ),
@@ -162,8 +157,7 @@ class CoursesPage extends StatelessWidget {
                                 suffixIcon: const Icon(Icons.arrow_drop_down),
                                 border: OutlineInputBorder(
                                   borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.tertiary,
+                                    color: Theme.of(context).colorScheme.tertiary,
                                     width: 1,
                                   ),
                                 ),
@@ -208,17 +202,14 @@ class CoursesPage extends StatelessWidget {
                           children: [
                             for (int i = 0; i < 5; i++)
                               InkWell(
-                                onTap: () => context
-                                    .push(context.namedLocation('course')),
+                                onTap: () => context.push(context.namedLocation('course')),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .tertiary
-                                            .withOpacity(0.5),
+                                        color:
+                                            Theme.of(context).colorScheme.tertiary.withOpacity(0.5),
                                         blurRadius: 0,
                                         offset: const Offset(0, 4),
                                       ),
@@ -234,36 +225,30 @@ class CoursesPage extends StatelessWidget {
                                         color: Colors.white,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .tertiary,
+                                          color: Theme.of(context).colorScheme.tertiary,
                                           width: 1,
                                         ),
                                       ),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Image.asset(
-                                            "images/course_photo.png",
+                                            "assets/images/course_photo.png",
                                             width: 286,
                                           ),
                                           const SizedBox(
                                             height: 10,
                                           ),
                                           Container(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                24, 24, 24, 10),
+                                            padding: const EdgeInsets.fromLTRB(24, 24, 24, 10),
                                             child: const Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text("Life in the Internet Age",
                                                     style: TextStyle(
                                                       fontFamily: 'Poppins',
                                                       fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w600,
+                                                      fontWeight: FontWeight.w600,
                                                     )),
                                                 SizedBox(
                                                   height: 10,
