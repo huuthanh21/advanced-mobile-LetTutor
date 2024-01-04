@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:faker/faker.dart';
 
 import '../../models/booking.dart';
+import '../../models/course.dart';
+import '../../models/ebook.dart';
 import '../../models/tutor.dart';
 import '../../models/user.dart';
 
@@ -133,5 +135,26 @@ class BookingDataProvider {
 
   void sortHistoriesByDate() {
     _histories.sort((a, b) => a.booking.dateTime.compareTo(b.booking.dateTime));
+  }
+}
+
+class CourseDataProvider {
+  final List<Course> _courses = [];
+  final List<Ebook> _ebooks = [];
+
+  List<Course> get courses => _courses;
+  List<Ebook> get ebooks => _ebooks;
+
+  CourseDataProvider() {
+    List.generate(10, (_) {
+      _courses.add(Course.getRandomCourse());
+    });
+    List.generate(10, (_) {
+      _ebooks.add(Ebook.getRandomEbook());
+    });
+  }
+
+  List<Course> getCoursesByType(int typeIndex) {
+    return _courses.where((course) => course.type == courseTypes[typeIndex]).toList();
   }
 }

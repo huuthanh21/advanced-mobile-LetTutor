@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         Provider(create: (_) => LoginProvider()),
         Provider(create: (_) => TutorDataProvider()),
         Provider(create: (_) => BookingDataProvider()),
+        Provider(create: (_) => CourseDataProvider()),
         ChangeNotifierProvider(create: (_) => FavoriteTutorsProvider()),
       ],
       child: MaterialApp.router(
