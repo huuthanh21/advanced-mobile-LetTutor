@@ -1,33 +1,55 @@
-import 'package:faker/faker.dart';
+import 'dart:convert';
 
 import 'user.dart';
 
 class Tutor {
-  final String id = faker.guid.guid();
+  final String id;
   final String name;
-  final String profilePictureUrl;
-  final Uri videoUrl = Uri.parse(
-      "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4");
   final String description;
   final String countryCode;
   final String education;
+  final String hobbies;
+  final String experience;
+  final String profilePictureUrl;
+  Uri videoUrl;
   final List<String> specializations = [];
   final List<String> languages = [];
   final List<String> courses = [];
-  final String hobbies;
-  final String experience;
   final List<Review> reviews = [];
   final List<Schedule> schedules = [];
 
   Tutor({
+    required this.id,
     required this.name,
     required this.description,
     required this.countryCode,
     required this.education,
     required this.hobbies,
     required this.experience,
-    this.profilePictureUrl = "https://picsum.photos/seed/20120582/200",
-  });
+    required this.profilePictureUrl,
+    required this.videoUrl,
+    specializations,
+    languages,
+    courses,
+    reviews,
+    schedules,
+  }) {
+    if (specializations != null) {
+      this.specializations.addAll(specializations as List<String>);
+    }
+    if (languages != null) {
+      this.languages.addAll(languages as List<String>);
+    }
+    if (courses != null) {
+      this.courses.addAll(courses);
+    }
+    if (reviews != null) {
+      this.reviews.addAll(reviews);
+    }
+    if (schedules != null) {
+      this.schedules.addAll(schedules);
+    }
+  }
 
   static List<String> specializationList = [
     'Tiếng Anh cho trẻ em',
@@ -43,84 +65,53 @@ class Tutor {
     'TOEIC'
   ];
 
-  static Tutor getRandomTutor() {
-    Tutor tutor = Tutor(
-      name: faker.person.name(),
-      profilePictureUrl:
-          "https://picsum.photos/seed/${faker.randomGenerator.integer(100)}/200",
-      description: faker.lorem.sentences(5).join(" "),
-      countryCode: faker.randomGenerator.element([
-        "VN",
-        "US",
-        "CN",
-        "IN",
-        "ID",
-        "PK",
-        "BR",
-        "NG",
-        "BD",
-        "RU",
-        "JP",
-        "MX",
-        "PH",
-        "ET",
-        "EG",
-        "DE",
-        "IR",
-        "TR",
-        "CD",
-        "FR"
-      ]),
-      education: faker.lorem.words(3).join(" "),
-      hobbies: faker.lorem.sentence(),
-      experience: faker.lorem.sentence(),
-    );
-    // Add random languages
-    for (var i = 0; i < faker.randomGenerator.integer(3, min: 1); i++) {
-      String randomLanguage = faker.randomGenerator.element([
-        "English",
-        "Vietnamese",
-        "Japanese",
-        "Korean",
-        "Mandarin",
-        "French",
-        "German",
-        "Spanish"
-      ]);
-      if (!tutor.languages.contains(randomLanguage)) {
-        tutor.languages.add(randomLanguage);
-      }
+  static List<Tutor> tutorModelsFromJson(String json) {
+    // Parse json to Dart object
+    Map<String, dynamic> apiResponse = jsonDecode(json);
+    List<dynamic> tutors = apiResponse["tutors"]["rows"];
+    // Convert to Tutor model
+    List<Tutor> tutorModels = [];
+    for (var tutor in tutors) {
+      tutorModels.add(Tutor(
+        id: tutor["id"],
+        name: tutor["name"],
+        profilePictureUrl: tutor["avatar"] ?? "https://i.pravatar.cc/300?u=${tutor["id"]}",
+        description: tutor["bio"] ?? "Không có mô tả",
+        countryCode: tutor["country"] ?? "VN",
+        education: tutor["education"] ?? "Không có thông tin",
+        hobbies: tutor["interests"] ?? "Không có thông tin",
+        experience: tutor["experience"],
+        videoUrl: tutor["video"] != null
+            ? Uri.parse(tutor["video"])
+            : Uri.parse(
+                "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4"),
+        specializations: tutor['specialties'] != null
+            ? (tutor['specialties'] as String).split(',')
+            : List<String>.empty(),
+        languages: tutor['languages'] != null
+            ? (tutor['languages'] as String).split(',')
+            : List<String>.empty(),
+        courses: null,
+        reviews: null,
+        schedules: null,
+      ));
     }
-    // Add random specializations
-    for (var i = 0; i < faker.randomGenerator.integer(6, min: 1); i++) {
-      String randomSpecialization = faker.randomGenerator.element(
-          specializationList
-              .where((element) => !tutor.specializations.contains(element))
-              .toList());
-      tutor.specializations.add(randomSpecialization);
+    return tutorModels;
+  }
+
+  static List<String> favoriteTutorIdsFromJson(String json) {
+    // Parse json to Dart object
+    Map<String, dynamic> apiResponse = jsonDecode(json);
+    List<dynamic> favoriteItems = apiResponse["favoriteTutor"];
+    // Convert to Tutor model
+    List<String> tutorIds = [];
+    for (var item in favoriteItems) {
+      var tutor = item["secondInfo"];
+      if (tutor == null) continue;
+      var tutorId = tutor["tutorInfo"]["id"];
+      tutorIds.add(tutorId);
     }
-    // Add random courses
-    for (var i = 0; i < faker.randomGenerator.integer(6, min: 1); i++) {
-      String randomCourse = faker.lorem.words(3).join(" ");
-      tutor.courses.add(randomCourse);
-    }
-    // Add random schedules for the next 7 days
-    for (var i = 0; i < 7; i++) {
-      for (var j = 0; j < faker.randomGenerator.integer(6, min: 1); j++) {
-        tutor.schedules.add(
-            Schedule(DateTime.now().add(Duration(days: i, hours: j * 2 + 8))));
-      }
-    }
-    // Add random reviews
-    for (var i = 0; i < faker.randomGenerator.integer(6, min: 0); i++) {
-      Review randomReview = Review(
-          author: User.getRandomUser(),
-          content: faker.lorem.sentences(2).join(" "),
-          rating: faker.randomGenerator.integer(5, min: 1),
-          date: faker.date.dateTime());
-      tutor.reviews.add(randomReview);
-    }
-    return tutor;
+    return tutorIds;
   }
 
   int get rating {

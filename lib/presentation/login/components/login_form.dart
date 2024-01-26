@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +21,7 @@ class _LoginFormState extends State<LoginForm> {
 
   final TextEditingController _emailFieldController = TextEditingController();
 
-  final TextEditingController _passwordFieldController =
-      TextEditingController();
+  final TextEditingController _passwordFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -91,8 +92,7 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
               InkWell(
-                  child: const Text("Quên mật khẩu?",
-                      style: TextStyle(color: Colors.blue)),
+                  child: const Text("Quên mật khẩu?", style: TextStyle(color: Colors.blue)),
                   onTap: () {}),
               TextButton(
                 onPressed: () {
@@ -103,15 +103,13 @@ class _LoginFormState extends State<LoginForm> {
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: const Center(
-                    child: Text("ĐĂNG NHẬP",
-                        style: TextStyle(fontSize: 22, color: Colors.white))),
+                    child: Text("ĐĂNG NHẬP", style: TextStyle(fontSize: 22, color: Colors.white))),
               ),
               const Center(child: Text("Hoặc tiếp tục với")),
               Row(
@@ -160,8 +158,7 @@ class _LoginFormState extends State<LoginForm> {
                 children: [
                   const Text("Chưa có tài khoản?"),
                   InkWell(
-                    child: const Text("Đăng ký",
-                        style: TextStyle(color: Colors.blue)),
+                    child: const Text("Đăng ký", style: TextStyle(color: Colors.blue)),
                     onTap: () => context.go(context.namedLocation('register')),
                   )
                 ],
@@ -173,11 +170,13 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 
-  void login(BuildContext context) {
+  void login(BuildContext context) async {
     final loginProvider = context.read<LoginProvider>();
-    bool loggedIn = loginProvider.login(
-        _emailFieldController.text, _passwordFieldController.text);
+    bool loggedIn =
+        await loginProvider.login(_emailFieldController.text, _passwordFieldController.text);
+
     if (loggedIn) {
+      log("Login success form");
       context.go(context.namedLocation('home'));
       return;
     }

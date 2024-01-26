@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:faker/faker.dart';
+import 'package:lettutor/core/api/api_service.dart';
 
 import '../../models/booking.dart';
 import '../../models/course.dart';
@@ -14,9 +15,15 @@ class TutorDataProvider {
   List<Tutor> get tutors => _tutors;
 
   TutorDataProvider() {
-    List.generate(10, (index) {
-      _tutors.add(Tutor.getRandomTutor());
-    });
+    fetchTutors();
+  }
+
+  void fetchTutors() async {
+    _tutors.clear();
+    var gotTutors = await ApiService().getTutors();
+    if (gotTutors != null) {
+      _tutors.addAll(gotTutors);
+    }
   }
 
   Tutor getTutorById(String id) {

@@ -1,14 +1,11 @@
-import 'package:faker/faker.dart';
-
 class User {
+  String id;
   String email;
-  String password;
+  String name;
+  String? avatarUrl;
   double totalLearningHours = 0;
 
-  User({required this.email, required this.password});
-
-  static User getRandomUser() {
-    return User(
-        email: faker.internet.email(), password: faker.internet.password());
+  User({required this.id, required this.name, required this.email, avatar}) {
+    avatarUrl = avatar;
   }
 }

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/providers/login_provider.dart';
-import '../../../models/user.dart';
 import 'base_auth_form.dart';
 import 'input_field.dart';
 import 'login_form.dart';
@@ -21,8 +20,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   final TextEditingController _emailFieldController = TextEditingController();
 
-  final TextEditingController _passwordFieldController =
-      TextEditingController();
+  final TextEditingController _passwordFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -101,15 +99,13 @@ class _RegisterFormState extends State<RegisterForm> {
                 },
                 style: TextButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 40),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: const Center(
-                    child: Text("ĐĂNG KÝ",
-                        style: TextStyle(fontSize: 22, color: Colors.white))),
+                    child: Text("ĐĂNG KÝ", style: TextStyle(fontSize: 22, color: Colors.white))),
               ),
               const Center(child: Text("Hoặc tiếp tục với")),
               Row(
@@ -158,8 +154,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 children: [
                   const Text("Đã có tài khoản?"),
                   InkWell(
-                    child: const Text("Đăng nhập ngay",
-                        style: TextStyle(color: Colors.blue)),
+                    child: const Text("Đăng nhập ngay", style: TextStyle(color: Colors.blue)),
                     onTap: () => context.go(context.namedLocation('login')),
                   )
                 ],
@@ -171,15 +166,22 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 
-  void register(BuildContext context) {
+  register(BuildContext context) async {
     final loginProvider = context.read<LoginProvider>();
-    bool isRegistered = loginProvider.register(User(
-        email: _emailFieldController.text,
-        password: _passwordFieldController.text));
+    bool isRegistered =
+        await loginProvider.register(_emailFieldController.text, _passwordFieldController.text);
+
+    print(isRegistered);
     if (isRegistered) {
       // Clear the text fields
       _emailFieldController.clear();
       _passwordFieldController.clear();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Đăng ký thành công. Hãy đăng nhập.'),
+        ),
+      );
       // Navigate to the login page
       context.go(context.namedLocation('login'));
     }
@@ -187,8 +189,7 @@ class _RegisterFormState extends State<RegisterForm> {
     else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-              'Đăng ký thất bại. Email đã được sử dụng. Vui lòng đăng nhập.'),
+          content: Text('Đăng ký thất bại. Email đã được sử dụng. '),
         ),
       );
     }

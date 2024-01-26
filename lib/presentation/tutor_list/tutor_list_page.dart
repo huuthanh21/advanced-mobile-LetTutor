@@ -11,6 +11,7 @@ import '../../common/widgets/footer.dart';
 import '../../common/widgets/top_app_bar.dart';
 import '../../core/providers/login_provider.dart';
 import '../../models/tutor.dart';
+import '../../models/user.dart';
 import 'components/tutor_card.dart';
 import 'providers/favorite_tutors_provider.dart';
 
@@ -38,28 +39,27 @@ class _TutorListPageState extends State<TutorListPage> {
   ];
 
   late List<int> _selectedTutorCountryFilters;
-  final List<String> _tutorSpecializationFilters = [
-    "Tất cả",
-    ...Tutor.specializationList
-  ];
+  final List<String> _tutorSpecializationFilters = ["Tất cả", ...Tutor.specializationList];
   int _selectedTutorSpecializationFilter = 0;
 
   DateTime? _selectedDate;
   final _dateController = TextEditingController();
 
+  late int currentPage;
+
   @override
   void initState() {
     super.initState();
+    currentPage = 1;
     _tutorDataProvider = Provider.of<TutorDataProvider>(context, listen: false);
-    _displayedTutors = _tutorDataProvider.tutors;
-    _favoriteTutorsProvider =
-        Provider.of<FavoriteTutorsProvider>(context, listen: false);
+    _displayedTutors = [];
+    _favoriteTutorsProvider = Provider.of<FavoriteTutorsProvider>(context, listen: false);
+    _getData();
     _loginProvider = Provider.of<LoginProvider>(context, listen: false);
-    _bookingDataProvider =
-        Provider.of<BookingDataProvider>(context, listen: false);
+    _bookingDataProvider = Provider.of<BookingDataProvider>(context, listen: false);
 
     // Development only
-    var users = _loginProvider.users;
+    var users = List<User>.empty();
     _bookingDataProvider.generateRandomData(users, _tutorDataProvider.tutors);
     for (var booking in _bookingDataProvider.bookings) {
       _tutorDataProvider.bookTutor(booking.tutor.id, booking.dateTime);
@@ -70,6 +70,19 @@ class _TutorListPageState extends State<TutorListPage> {
       if (!_focusNode.hasFocus) {
         setState(() => _displayedTutors = getFilteredTutors());
       }
+    });
+  }
+
+  void _getData() async {
+    _tutorDataProvider.fetchTutors();
+    _favoriteTutorsProvider.fetchFavoriteTutors();
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        _displayedTutors = _tutorDataProvider.tutors;
+        for (var tutor in _favoriteTutorsProvider.favoriteTutorsId) {
+          print(tutor);
+        }
+      });
     });
   }
 
@@ -105,41 +118,31 @@ class _TutorListPageState extends State<TutorListPage> {
                 children: [
                   const Text(
                     "Buổi học sắp diễn ra",
-                    style: TextStyle(
-                        fontSize: 24,
-                        fontFamily: "Open Sans",
-                        color: Colors.white),
+                    style: TextStyle(fontSize: 24, fontFamily: "Open Sans", color: Colors.white),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(
                         "T7, 04 Thg 11 23 18:00 - 18:25 (còn 27:13:25)",
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: "Open Sans",
-                            color: Colors.white),
+                        style:
+                            TextStyle(fontSize: 18, fontFamily: "Open Sans", color: Colors.white),
                       ),
                       const Gap(20),
                       TextButton.icon(
                         onPressed: () {},
-                        icon: Icon(Icons.video_call,
-                            color: Theme.of(context).colorScheme.primary),
+                        icon: Icon(Icons.video_call, color: Theme.of(context).colorScheme.primary),
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.white,
                         ),
                         label: Text("Vào lớp học",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary)),
+                            style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                       ),
                     ],
                   ),
                   const Text(
                     "Tổng số giờ bạn đã học là 514 giờ 35 phút",
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: "Open Sans",
-                        color: Colors.white),
+                    style: TextStyle(fontSize: 16, fontFamily: "Open Sans", color: Colors.white),
                   ),
                 ],
               ),
@@ -289,8 +292,7 @@ class _TutorListPageState extends State<TutorListPage> {
                         selected: _selectedTutorSpecializationFilter == index,
                         onSelected: (selected) {
                           setState(() {
-                            _selectedTutorSpecializationFilter =
-                                selected ? index : 0;
+                            _selectedTutorSpecializationFilter = selected ? index : 0;
                             _displayedTutors = getFilteredTutors();
                           });
                         },
@@ -310,22 +312,17 @@ class _TutorListPageState extends State<TutorListPage> {
                       ),
                     ),
                     child: Text("Đặt lại bộ tìm kiếm",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary)),
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary)),
                   ),
                   const Gap(20),
                   Text("Gia sư được đề xuất",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(fontSize: 28)),
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 28)),
                   const Gap(10),
                   Consumer<FavoriteTutorsProvider>(
                     builder: (context, value, child) {
                       _displayedTutors = getFilteredTutors();
                       return GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
@@ -343,8 +340,8 @@ class _TutorListPageState extends State<TutorListPage> {
                     const SizedBox(
                       height: 200,
                       child: Center(
-                        child: Text(
-                            "Xin lỗi, chúng tôi không thể tìm thấy kết quả vớI từ khoá này"),
+                        child:
+                            Text("Xin lỗi, chúng tôi không thể tìm thấy kết quả vớI từ khoá này"),
                       ),
                     ),
                 ],
@@ -383,12 +380,10 @@ class _TutorListPageState extends State<TutorListPage> {
     if (_selectedTutorCountryFilters.length == 2) {
       if (vietnameseFilter && nativeSpeakerFilter) {
         filteredTutors = filteredTutors
-            .where(
-                (tutor) => !tutor.isForeigner || tutor.isNativeEnglishSpeaker)
+            .where((tutor) => !tutor.isForeigner || tutor.isNativeEnglishSpeaker)
             .toList();
       } else if (foreignFilter && nativeSpeakerFilter) {
-        filteredTutors =
-            filteredTutors.where((tutor) => !tutor.isForeigner).toList();
+        filteredTutors = filteredTutors.where((tutor) => !tutor.isForeigner).toList();
       }
     }
 
@@ -398,24 +393,18 @@ class _TutorListPageState extends State<TutorListPage> {
     // 3. Native speaker filter is selected: show native speakers
     if (_selectedTutorCountryFilters.length == 1) {
       if (vietnameseFilter) {
-        filteredTutors =
-            filteredTutors.where((tutor) => !tutor.isForeigner).toList();
+        filteredTutors = filteredTutors.where((tutor) => !tutor.isForeigner).toList();
       } else if (foreignFilter) {
-        filteredTutors =
-            filteredTutors.where((tutor) => tutor.isForeigner).toList();
+        filteredTutors = filteredTutors.where((tutor) => tutor.isForeigner).toList();
       } else if (nativeSpeakerFilter) {
-        filteredTutors = filteredTutors
-            .where((tutor) => tutor.isNativeEnglishSpeaker)
-            .toList();
+        filteredTutors = filteredTutors.where((tutor) => tutor.isNativeEnglishSpeaker).toList();
       }
     }
 
-    String selectedSpecialization =
-        _tutorSpecializationFilters[_selectedTutorSpecializationFilter];
+    String selectedSpecialization = _tutorSpecializationFilters[_selectedTutorSpecializationFilter];
     if (_selectedTutorSpecializationFilter != 0) {
       filteredTutors = filteredTutors
-          .where(
-              (tutor) => tutor.specializations.contains(selectedSpecialization))
+          .where((tutor) => tutor.specializations.contains(selectedSpecialization))
           .toList();
     }
 

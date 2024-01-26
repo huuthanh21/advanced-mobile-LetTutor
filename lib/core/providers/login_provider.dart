@@ -1,42 +1,41 @@
+import 'package:lettutor/core/api/api_service.dart';
+
+import '../../common/constant.dart';
 import '../../models/user.dart';
 
 class LoginProvider {
   // ignore: unused_field
   User? _user;
-  final List<User> _users = [
-    User(email: "teacher@lettutor.com", password: "123456"),
-    User(email: "student@lettutor.com", password: "123456"),
-    User(email: "admin@mail.com", password: "123456")
-  ];
 
   User get user => _user!;
-  List<User> get users => _users;
 
   bool _isLoggedIn = false;
 
   bool get isLoggedIn => _isLoggedIn;
 
-  bool login(String email, String password) {
+  String? accessToken;
+  String? refreshToken;
+
+  Future<bool> login(String email, String password) async {
     if (_isLoggedIn) return false;
-    for (var user in _users) {
-      if (user.email == email && user.password == password) {
-        _user = user;
+    // call API to login
+    await ApiService().login(email, password).then((data) {
+      if (data != null) {
+        _user = data['user'];
+        var tokens = data['tokens'];
+        accessToken = tokens[0];
+        Tokens.accessToken = accessToken;
+        refreshToken = tokens[1];
+        Tokens.refreshToken = refreshToken;
         _isLoggedIn = true;
-        return true;
       }
-    }
-    return false;
+    });
+    return _isLoggedIn;
   }
 
-  bool register(User newUser) {
+  Future<bool> register(String email, String password) async {
     if (_isLoggedIn) return false;
-    // Check if email is already registered
-    for (var user in _users) {
-      if (user.email == newUser.email) {
-        return false;
-      }
-    }
-    _users.add(newUser);
-    return true;
+
+    return await ApiService().register(email, password);
   }
 }
