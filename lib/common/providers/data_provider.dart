@@ -26,18 +26,18 @@ class TutorDataProvider {
     }
   }
 
-  Tutor getTutorById(String id) {
-    return _tutors.firstWhere((tutor) => tutor.id == id);
+  Future<Tutor?> getTutorById(String id) async {
+    return await ApiService().getTutorById(id);
   }
 
-  void bookTutor(String tutorId, DateTime dateTime) {
-    Tutor tutor = getTutorById(tutorId);
-    tutor.schedules.firstWhere((schedule) => schedule.dateTime == dateTime).isBooked = true;
+  bookTutor(String tutorId, DateTime dateTime) async {
+    Tutor? tutor = await getTutorById(tutorId);
+    tutor?.schedules.firstWhere((schedule) => schedule.dateTime == dateTime).isBooked = true;
   }
 
-  void cancelBooking(String tutorId, DateTime dateTime) {
-    Tutor tutor = getTutorById(tutorId);
-    tutor.schedules.firstWhere((schedule) => schedule.dateTime == dateTime).isBooked = false;
+  cancelBooking(String tutorId, DateTime dateTime) async {
+    Tutor? tutor = await getTutorById(tutorId);
+    tutor?.schedules.firstWhere((schedule) => schedule.dateTime == dateTime).isBooked = false;
   }
 }
 

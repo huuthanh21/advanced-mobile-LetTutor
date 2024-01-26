@@ -73,10 +73,13 @@ class _TutorCardState extends State<TutorCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           InkWell(
-                            onTap: () => context.push(
-                              context
-                                  .namedLocation("tutor", pathParameters: {"tid": widget.tutor.id}),
-                            ),
+                            onTap: () {
+                              log("Go to tutor detail page ${widget.tutor.id}");
+                              context.push(
+                                context.namedLocation("tutor",
+                                    pathParameters: {"tid": widget.tutor.id}),
+                              );
+                            },
                             child: Text(widget.tutor.name,
                                 style:
                                     Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 22)),

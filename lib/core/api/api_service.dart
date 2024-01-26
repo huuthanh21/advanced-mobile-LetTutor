@@ -117,4 +117,64 @@ class ApiService {
     }
     return false;
   }
+
+  Future<Tutor?> getTutorById(String id) async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndpoints.tutorEndPoint}/$id');
+      print(url.toString());
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Tutor tutor = await Tutor.tutorModelFromJson(response.body);
+        return tutor;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return null;
+  }
+
+  Future<List<Review>> getReviews(String tutorId) async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndpoints.reviewsEndpoint}/$tutorId');
+      url = url.replace(queryParameters: {
+        'perPage': '12',
+        'page': '1',
+      });
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      if (response.statusCode == 200) {
+        List<Review> reviews = Review.reviewsFromJson(response.body);
+        return reviews;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return [];
+  }
+
+  Future<List<Schedule>> getSchedules(String tutorId) async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndpoints.scheduleEndpoint}');
+      url = url.replace(queryParameters: {
+        'tutorId': tutorId,
+        'page': '0',
+      });
+      print(url.toString());
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        List<Schedule> schedules = Schedule.schedulesFromJson(response.body);
+        return schedules;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return [];
+  }
 }

@@ -46,7 +46,7 @@ const List<String> courseTypes = [
 ];
 
 class Course {
-  final String id = faker.guid.guid();
+  final String id;
   final String type;
   final Uri coverUri = Uri.parse(
       'https://camblycurriculumicons.s3.amazonaws.com/5e0e8b212ac750e7dc9886ac?h=d41d8cd98f00b204e9800998ecf8427e');
@@ -58,6 +58,7 @@ class Course {
   final List<CourseTopic> topics;
 
   Course({
+    required this.id,
     required this.type,
     required this.title,
     required this.description,
@@ -69,6 +70,7 @@ class Course {
 
   static Course getRandomCourse() {
     return Course(
+      id: faker.guid.guid(),
       type: courseTypes[faker.randomGenerator.integer(courseTypes.length - 1)],
       title: toBeginningOfSentenceCase(faker.lorem.words(3).join(' '))!,
       description: toBeginningOfSentenceCase(faker.lorem.words(10).join(' '))!,
@@ -80,6 +82,23 @@ class Course {
         (index) => CourseTopic(name: faker.lorem.words(2).join(' ')),
       ),
     );
+  }
+
+  static List<Course> tutorCoursesFromJson(tutorCourses) {
+    List<Course> courses = [];
+    for (var course in tutorCourses) {
+      courses.add(Course(
+        id: course['id'],
+        type: '',
+        title: course['name'],
+        description: '',
+        whyDescription: '',
+        whatDescription: '',
+        level: Level.any,
+        topics: [],
+      ));
+    }
+    return courses;
   }
 }
 
