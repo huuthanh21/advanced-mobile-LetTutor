@@ -17,7 +17,7 @@ class ApiService {
       //   'page': page.toString(),
       // });
       // make request
-      final response = await http.get(url, headers: {
+      final response = await http.post(url, headers: {
         'Authorization': 'Bearer ${Tokens.accessToken}',
       });
       // check status code
@@ -35,7 +35,7 @@ class ApiService {
   Future<List<String>?> getFavoriteTutors() async {
     try {
       var url = Uri.parse(ApiConstants.baseUrl + ApiConstants.tutorsEndpoint);
-      final response = await http.get(url, headers: {
+      final response = await http.post(url, headers: {
         'Authorization': 'Bearer ${Tokens.accessToken}',
       });
       if (response.statusCode == 200) {
@@ -46,6 +46,24 @@ class ApiService {
       rethrow;
     }
     return null;
+  }
+
+  toggleFavoriteTutor(String tutorId) async {
+    try {
+      var url = Uri.parse(ApiConstants.baseUrl + TutorEndpoints.toggleFavoriteTutor);
+      final response = await http.post(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      }, body: {
+        'tutorId': tutorId,
+      });
+      if (response.statusCode == 200) {
+        print('Toggle favorite tutor success');
+        return true;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return false;
   }
 
   // login and get token

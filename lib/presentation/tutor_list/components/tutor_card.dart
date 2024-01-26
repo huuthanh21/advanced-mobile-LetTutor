@@ -106,8 +106,8 @@ class _TutorCardState extends State<TutorCard> {
                     IconButton(
                         onPressed: () {
                           log("Remove favorite tutor ${widget.tutor.id}");
-                          setState(
-                              () => favoriteTutorsProvider.removeFavoriteTutor(widget.tutor.id));
+                          favoriteTutorsProvider.removeFavoriteTutor(widget.tutor.id);
+                          setState(() {});
                         },
                         icon: const Icon(
                           Icons.favorite,
@@ -117,7 +117,8 @@ class _TutorCardState extends State<TutorCard> {
                     IconButton(
                         onPressed: () {
                           log("Add favorite tutor ${widget.tutor.id}");
-                          setState(() => favoriteTutorsProvider.addFavoriteTutor(widget.tutor.id));
+                          favoriteTutorsProvider.addFavoriteTutor(widget.tutor.id);
+                          setState(() {});
                         },
                         icon: const Icon(
                           Icons.favorite_border,

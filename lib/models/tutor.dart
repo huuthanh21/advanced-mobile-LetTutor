@@ -68,7 +68,7 @@ class Tutor {
   static List<Tutor> tutorModelsFromJson(String json) {
     // Parse json to Dart object
     Map<String, dynamic> apiResponse = jsonDecode(json);
-    List<dynamic> tutors = apiResponse["tutors"]["rows"];
+    List<dynamic> tutors = apiResponse["rows"];
     // Convert to Tutor model
     List<Tutor> tutorModels = [];
     for (var tutor in tutors) {
@@ -80,11 +80,8 @@ class Tutor {
         countryCode: tutor["country"] ?? "VN",
         education: tutor["education"] ?? "Không có thông tin",
         hobbies: tutor["interests"] ?? "Không có thông tin",
-        experience: tutor["experience"],
-        videoUrl: tutor["video"] != null
-            ? Uri.parse(tutor["video"])
-            : Uri.parse(
-                "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4"),
+        experience: tutor["experience"] ?? "Không có thông tin",
+        videoUrl: tutor["video"] ?? Uri.parse("https://www.w3schools.com/tags/mov_bbb.mp4"),
         specializations: tutor['specialties'] != null
             ? (tutor['specialties'] as String).split(',')
             : List<String>.empty(),
@@ -102,14 +99,12 @@ class Tutor {
   static List<String> favoriteTutorIdsFromJson(String json) {
     // Parse json to Dart object
     Map<String, dynamic> apiResponse = jsonDecode(json);
-    List<dynamic> favoriteItems = apiResponse["favoriteTutor"];
-    // Convert to Tutor model
+    List<dynamic> tutors = apiResponse["rows"];
     List<String> tutorIds = [];
-    for (var item in favoriteItems) {
-      var tutor = item["secondInfo"];
-      if (tutor == null) continue;
-      var tutorId = tutor["tutorInfo"]["id"];
-      tutorIds.add(tutorId);
+    for (var tutor in tutors) {
+      if (tutor["isFavoriteTutor"] == true) {
+        tutorIds.add(tutor["id"]);
+      }
     }
     return tutorIds;
   }

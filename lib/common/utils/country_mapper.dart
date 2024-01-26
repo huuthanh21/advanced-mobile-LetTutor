@@ -241,6 +241,7 @@ class CountryMapper {
     'VU': 'Vanuatu',
     'VE': 'Venezuela',
     'VN': 'Việt Nam',
+    'VIETNAM': 'Việt Nam',
     'VG': 'Virgin Islands (British)',
     'VI': 'Virgin Islands (U.S.)',
     'WF': 'Wallis and Futuna',

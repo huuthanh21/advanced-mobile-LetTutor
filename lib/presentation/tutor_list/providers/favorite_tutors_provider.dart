@@ -16,13 +16,17 @@ class FavoriteTutorsProvider extends ChangeNotifier {
     print(_favoriteTutorsId);
   }
 
-  void addFavoriteTutor(String tutorId) {
+  void addFavoriteTutor(String tutorId) async {
     _favoriteTutorsId.add(tutorId);
+    // CALL API TO ADD FAVORITE TUTOR
+    await ApiService().toggleFavoriteTutor(tutorId);
     notifyListeners();
   }
 
-  void removeFavoriteTutor(String tutorId) {
+  void removeFavoriteTutor(String tutorId) async {
     _favoriteTutorsId.remove(tutorId);
+    // CALL API TO REMOVE FAVORITE TUTOR
+    await ApiService().toggleFavoriteTutor(tutorId);
     notifyListeners();
   }
 

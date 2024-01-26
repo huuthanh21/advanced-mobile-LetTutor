@@ -1,13 +1,17 @@
 class ApiConstants {
   static String baseUrl = 'https://sandbox.api.lettutor.com';
-  static String usersEndpoint = '/users';
-  static String tutorsEndpoint = '/tutor/more';
+  static String tutorsEndpoint = '/tutor/search';
 }
 
 class AuthenticationEndPoints {
   static String login = '/auth/login';
   static String register = '/auth/register';
   static String logout = '/auth/logout';
+}
+
+class TutorEndpoints {
+  static String getTutors = '/tutor/more';
+  static String toggleFavoriteTutor = '/user/manageFavoriteTutor';
 }
 
 class Tokens {
