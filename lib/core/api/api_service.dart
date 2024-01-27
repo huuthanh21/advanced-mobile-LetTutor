@@ -340,4 +340,22 @@ class ApiService {
       coverUri: Uri.parse(""),
     );
   }
+
+  Future<int> getTotalHours() async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndPoints.totalHoursEndPoint}');
+      print(url.toString());
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Map<String, dynamic> json = jsonDecode(response.body);
+        return json['total'];
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return -1;
+  }
 }

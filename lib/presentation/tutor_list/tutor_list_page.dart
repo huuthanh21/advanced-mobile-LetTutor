@@ -130,20 +130,30 @@ class _TutorListPageState extends State<TutorListPage> {
                       ),
                       const Gap(20),
                       TextButton.icon(
-                        onPressed: () {},
-                        icon: Icon(Icons.video_call, color: Theme.of(context).colorScheme.primary),
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.white,
-                        ),
-                        label: Text("Vào lớp học",
-                            style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-                      ),
+                          onPressed: () {},
+                          icon:
+                              Icon(Icons.video_call, color: Theme.of(context).colorScheme.primary),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.white,
+                          ),
+                          label: Text("Vào lớp học",
+                              style: TextStyle(color: Theme.of(context).colorScheme.primary))),
                     ],
                   ),
-                  const Text(
-                    "Tổng số giờ bạn đã học là 514 giờ 35 phút",
-                    style: TextStyle(fontSize: 16, fontFamily: "Open Sans", color: Colors.white),
-                  ),
+                  FutureBuilder(
+                      future: _tutorDataProvider.getTotalHours(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(
+                              "Tổng số giờ bạn đã học là ${totalHoursToFormatted(snapshot.data)}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontFamily: "Open Sans", color: Colors.white));
+                        } else if (snapshot.hasError) {
+                          return Text("Error");
+                        } else {
+                          return Text("Loading...");
+                        }
+                      }),
                 ],
               ),
             ),
@@ -434,5 +444,12 @@ class _TutorListPageState extends State<TutorListPage> {
     _focusNode.dispose();
     _dateController.dispose();
     super.dispose();
+  }
+
+  String totalHoursToFormatted(int? hours) {
+    if (hours == null) return "0";
+    int totalHours = hours ~/ 60;
+    int totalMinutes = hours % 60;
+    return "$totalHours giờ $totalMinutes phút";
   }
 }

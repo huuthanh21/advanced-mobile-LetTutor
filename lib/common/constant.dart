@@ -15,6 +15,7 @@ class TutorEndPoints {
   static String toggleFavoriteTutor = '/user/manageFavoriteTutor';
   static String reviewsEndpoint = '/feedback/v2';
   static String scheduleEndpoint = '/schedule';
+  static String totalHoursEndPoint = '/call/total';
 }
 
 class BookingsEndPoints {

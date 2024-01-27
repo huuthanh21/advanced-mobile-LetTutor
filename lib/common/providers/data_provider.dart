@@ -39,6 +39,10 @@ class TutorDataProvider {
     Tutor? tutor = await getTutorById(tutorId);
     tutor?.schedules.firstWhere((schedule) => schedule.dateTime == dateTime).isBooked = false;
   }
+
+  Future<int> getTotalHours() async {
+    return await ApiService().getTotalHours();
+  }
 }
 
 class BookingDataProvider {
