@@ -153,8 +153,8 @@ class BookingDataProvider {
     _histories.sort((a, b) => a.booking.dateTime.compareTo(b.booking.dateTime));
   }
 
-  Future<List<Booking>> getBookingSchedule() async {
-    return await ApiService().getBookingSchedule();
+  Future<List<Booking>> getBookingSchedule(int page) async {
+    return await ApiService().getBookingSchedule(page);
   }
 
   Future<List<History>> getHistorySchedule() async {
@@ -163,6 +163,10 @@ class BookingDataProvider {
 
   Future<String> getUpcomingBooking() async {
     return await ApiService().getUpcomingBooking();
+  }
+
+  Future<int> getBookingScheduleLength() async {
+    return await ApiService().getBookingScheduleLength();
   }
 }
 

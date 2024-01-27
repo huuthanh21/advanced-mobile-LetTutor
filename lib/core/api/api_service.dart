@@ -184,13 +184,13 @@ class ApiService {
     return [];
   }
 
-  Future<List<Booking>> getBookingSchedule() async {
+  Future<List<Booking>> getBookingSchedule(int page) async {
     try {
       var url = Uri.parse('${ApiConstants.baseUrl}${BookingsEndPoints.bookingEndPoint}');
 
       url = url.replace(queryParameters: {
-        'perPage': '20',
-        'page': '1',
+        'perPage': '10',
+        'page': '$page',
         "inFuture": '1',
         "orderBy": "meeting",
         "sortBy": "asc",
@@ -414,5 +414,31 @@ class ApiService {
       rethrow;
     }
     return "";
+  }
+
+  Future<int> getBookingScheduleLength() async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${BookingsEndPoints.bookingEndPoint}');
+
+      url = url.replace(queryParameters: {
+        'perPage': '20',
+        'page': '1',
+        "inFuture": '1',
+        "orderBy": "meeting",
+        "sortBy": "asc",
+      });
+      print(url.toString());
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        int length = jsonDecode(response.body)['data']['count'];
+        return length;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return 0;
   }
 }

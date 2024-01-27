@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:lettutor/common/converters/start_datetime_to_schedule_range.dart';
 import 'package:lettutor/common/providers/data_provider.dart';
 import 'package:lettutor/common/widgets/top_app_bar.dart';
+import 'package:number_paginator/number_paginator.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/utils/country_mapper.dart';
@@ -24,10 +25,13 @@ class _SchedulePageState extends State<SchedulePage> {
   late BookingDataProvider _bookingDataProvider;
   late TutorDataProvider _tutorDataProvider;
   late List<Booking> _bookings;
+  late int _currentPage;
 
   @override
   void initState() {
     super.initState();
+
+    _currentPage = 0;
 
     // Providers
     _loginProvider = context.read<LoginProvider>();
@@ -149,7 +153,8 @@ class _SchedulePageState extends State<SchedulePage> {
                   ),
                   const Gap(20),
                   FutureBuilder(
-                      future: context.read<BookingDataProvider>().getBookingSchedule(),
+                      future:
+                          context.read<BookingDataProvider>().getBookingSchedule(_currentPage + 1),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
                           _bookings = snapshot.data as List<Booking>;
@@ -375,6 +380,25 @@ class _SchedulePageState extends State<SchedulePage> {
                       }),
                 ],
               ),
+            ),
+            FutureBuilder(
+              future: context.read<BookingDataProvider>().getBookingScheduleLength(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return NumberPaginator(
+                    // by default, the paginator shows numbers as center content
+                    numberPages: (snapshot.data! / 10).ceil(),
+                    onPageChange: (int index) {
+                      setState(() {
+                        _currentPage = index;
+                      });
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  throw snapshot.error!;
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
             ),
             const Gap(40),
             const Footer(),
