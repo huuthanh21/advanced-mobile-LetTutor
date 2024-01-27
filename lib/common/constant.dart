@@ -9,12 +9,17 @@ class AuthenticationEndPoints {
   static String logout = '/auth/logout';
 }
 
-class TutorEndpoints {
+class TutorEndPoints {
   static String tutorEndPoint = '/tutor';
   static String getTutors = '/tutor/more';
   static String toggleFavoriteTutor = '/user/manageFavoriteTutor';
   static String reviewsEndpoint = '/feedback/v2';
   static String scheduleEndpoint = '/schedule';
+}
+
+class BookingsEndPoints {
+  static String bookingEndPoint = '/booking/list/student';
+  static String cancelBookingEndPoint = '/booking/schedule-detail';
 }
 
 class Tokens {

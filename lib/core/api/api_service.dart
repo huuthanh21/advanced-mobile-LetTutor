@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 import 'package:lettutor/common/constant.dart';
+import 'package:lettutor/models/booking.dart';
 
 import '../../models/tutor.dart';
 import '../../models/user.dart';
@@ -50,7 +51,7 @@ class ApiService {
 
   toggleFavoriteTutor(String tutorId) async {
     try {
-      var url = Uri.parse(ApiConstants.baseUrl + TutorEndpoints.toggleFavoriteTutor);
+      var url = Uri.parse(ApiConstants.baseUrl + TutorEndPoints.toggleFavoriteTutor);
       final response = await http.post(url, headers: {
         'Authorization': 'Bearer ${Tokens.accessToken}',
       }, body: {
@@ -120,7 +121,7 @@ class ApiService {
 
   Future<Tutor?> getTutorById(String id) async {
     try {
-      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndpoints.tutorEndPoint}/$id');
+      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndPoints.tutorEndPoint}/$id');
       print(url.toString());
       final response = await http.get(url, headers: {
         'Authorization': 'Bearer ${Tokens.accessToken}',
@@ -138,7 +139,7 @@ class ApiService {
 
   Future<List<Review>> getReviews(String tutorId) async {
     try {
-      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndpoints.reviewsEndpoint}/$tutorId');
+      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndPoints.reviewsEndpoint}/$tutorId');
       url = url.replace(queryParameters: {
         'perPage': '12',
         'page': '1',
@@ -158,7 +159,7 @@ class ApiService {
 
   Future<List<Schedule>> getSchedules(String tutorId) async {
     try {
-      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndpoints.scheduleEndpoint}');
+      var url = Uri.parse('${ApiConstants.baseUrl}${TutorEndPoints.scheduleEndpoint}');
       url = url.replace(queryParameters: {
         'tutorId': tutorId,
         'page': '0',
@@ -171,6 +172,87 @@ class ApiService {
       if (response.statusCode == 200) {
         List<Schedule> schedules = Schedule.schedulesFromJson(response.body);
         return schedules;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return [];
+  }
+
+  Future<List<Booking>> getBookingSchedule() async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${BookingsEndPoints.bookingEndPoint}');
+
+      url = url.replace(queryParameters: {
+        'perPage': '20',
+        'page': '1',
+        "inFuture": '1',
+        "orderBy": "meeting",
+        "sortBy": "asc",
+      });
+      print(url.toString());
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        List<Booking> bookings = Booking.bookingsFromJson(response.body);
+        return bookings;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return [];
+  }
+
+  Future<bool> cancelBooking(String id) async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${BookingsEndPoints.cancelBookingEndPoint}');
+      print(url.toString());
+      var body = {
+        'scheduleDetailId': '$id',
+        'cancelInfo': {'cancelReasonId': 1}
+      };
+      var encodedBody = jsonEncode(body);
+      var headers = {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+        'Content-Type': 'application/json',
+      };
+
+      var response = await http.delete(url, headers: headers, body: encodedBody);
+      print(encodedBody);
+
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return false;
+  }
+
+  Future<List<History>> getHistorySchedule() async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${BookingsEndPoints.bookingEndPoint}');
+
+      url = url.replace(queryParameters: {
+        'perPage': '20',
+        'page': '1',
+        "inFuture": '0',
+        "orderBy": "meeting",
+        "sortBy": "desc",
+      });
+      print(url.toString());
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        List<History> histories = History.historiesFromJson(response.body);
+        return histories;
       }
     } catch (e) {
       rethrow;

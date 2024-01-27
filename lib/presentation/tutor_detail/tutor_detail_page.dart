@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:country_flags/country_flags.dart';
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
@@ -114,9 +115,10 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
 
       // Update in booking provider
       var booking = Booking(
-        user: _loginProvider.user,
+        id: faker.guid.guid(),
         tutor: _tutor!,
         dateTime: schedule.dateTime,
+        status: BookingStatus.confirmed,
       );
       _bookingsProvider.addBooking(booking);
 

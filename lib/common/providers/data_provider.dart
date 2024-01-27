@@ -69,9 +69,10 @@ class BookingDataProvider {
           bool completed = random.nextBool();
           var history = History(
               booking: Booking(
-                  user: user,
+                  id: faker.guid.guid(),
                   tutor: tutor,
-                  dateTime: schedule.dateTime.subtract(const Duration(days: 7))),
+                  dateTime: schedule.dateTime.subtract(const Duration(days: 7)),
+                  status: BookingStatus.completed),
               completed: completed);
           if (completed && random.nextBool()) {
             history.booking.request = faker.lorem.sentence();
@@ -103,7 +104,11 @@ class BookingDataProvider {
         int scheduleIndex = random.nextInt(tutor.schedules.length);
         Schedule schedule = tutor.schedules[scheduleIndex];
         if (random.nextBool()) {
-          var booking = Booking(user: user, tutor: tutor, dateTime: schedule.dateTime);
+          var booking = Booking(
+              id: faker.guid.guid(),
+              tutor: tutor,
+              dateTime: schedule.dateTime,
+              status: BookingStatus.confirmed);
           if (random.nextBool()) {
             booking.request = faker.lorem.sentence();
           }
@@ -124,16 +129,16 @@ class BookingDataProvider {
     sortHistoriesByDate();
   }
 
-  void cancelBooking(Booking booking) {
-    _bookings.remove(booking);
+  Future<bool> cancelBooking(Booking booking) async {
+    return await ApiService().cancelBooking(booking.id);
   }
 
   List<Booking> getBookingsByUser(User user) {
-    return _bookings.where((booking) => booking.user.email == user.email).toList();
+    return [];
   }
 
   List<History> getHistoriesByUser(User user) {
-    return _histories.where((history) => history.booking.user.email == user.email).toList();
+    return [];
   }
 
   void sortBookingsByDate() {
@@ -142,6 +147,14 @@ class BookingDataProvider {
 
   void sortHistoriesByDate() {
     _histories.sort((a, b) => a.booking.dateTime.compareTo(b.booking.dateTime));
+  }
+
+  Future<List<Booking>> getBookingSchedule() async {
+    return await ApiService().getBookingSchedule();
+  }
+
+  Future<List<History>> getHistorySchedule() async {
+    return await ApiService().getHistorySchedule();
   }
 }
 
