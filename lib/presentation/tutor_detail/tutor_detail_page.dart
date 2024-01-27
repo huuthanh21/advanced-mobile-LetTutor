@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:country_flags/country_flags.dart';
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
@@ -15,7 +14,7 @@ import '../../common/utils/country_mapper.dart';
 import '../../common/widgets/footer.dart';
 import '../../common/widgets/rating_bar.dart';
 import '../../common/widgets/top_app_bar.dart';
-import '../../models/booking.dart';
+import '../../core/api/api_service.dart';
 import '../../models/tutor.dart';
 import '../tutor_list/providers/favorite_tutors_provider.dart';
 
@@ -103,29 +102,8 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
     }
   }
 
-  void bookSchedule(Schedule schedule) {
-    _tutorDataProvider.bookTutor(_tutor!.id, schedule.dateTime);
-    setState(() {
-      // Update in tutor provider
-      _tutorDataProvider.tutors
-          .firstWhere((tutor) => tutor.id == _tutor!.id)
-          .schedules
-          .firstWhere((s) => s.dateTime == schedule.dateTime)
-          .isBooked = true;
-
-      // Update in booking provider
-      var booking = Booking(
-        id: faker.guid.guid(),
-        tutor: _tutor!,
-        dateTime: schedule.dateTime,
-        status: BookingStatus.confirmed,
-      );
-      _bookingsProvider.addBooking(booking);
-
-      // Update in local state
-      schedule.isBooked = true;
-      _updateDisplayedSchedules();
-    });
+  Future<bool> bookSchedule(Schedule schedule) async {
+    return await ApiService().bookSchedule(schedule);
   }
 
   @override
@@ -549,7 +527,27 @@ class _TutorDetailPageState extends State<TutorDetailPage> {
                                       const Text("Đã đặt", style: TextStyle(color: Colors.grey))
                                     else
                                       ElevatedButton(
-                                        onPressed: () => bookSchedule(_displayedSchedules[index]),
+                                        onPressed: () async {
+                                          if (await bookSchedule(_displayedSchedules[index]) ==
+                                              false) {
+                                            // show toast
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                    "Đặt lịch không thành công. Đã có lỗi xảy ra"),
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text("Đặt lịch thành công"),
+                                            ),
+                                          );
+                                          setState(() {
+                                            _displayedSchedules[index].isBooked = true;
+                                          });
+                                        },
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: Theme.of(context).colorScheme.primary,
                                           shape: RoundedRectangleBorder(

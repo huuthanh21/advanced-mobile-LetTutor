@@ -358,4 +358,34 @@ class ApiService {
     }
     return -1;
   }
+
+  Future<bool> bookSchedule(Schedule schedule) async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${BookingsEndPoints.bookingTutorEndPoint}');
+      print(url.toString());
+
+      var headers = {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+        'Content-Type': 'application/json',
+      };
+      var body = {
+        'scheduleDetailIds': [
+          schedule.id,
+        ],
+        'note': ""
+      };
+      var encodedBody = jsonEncode(body);
+      final response = await http.post(url, headers: headers, body: encodedBody);
+
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return false;
+  }
 }

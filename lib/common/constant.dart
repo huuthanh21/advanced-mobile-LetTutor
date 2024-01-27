@@ -21,6 +21,7 @@ class TutorEndPoints {
 class BookingsEndPoints {
   static String bookingEndPoint = '/booking/list/student';
   static String cancelBookingEndPoint = '/booking/schedule-detail';
+  static String bookingTutorEndPoint = '/booking';
 }
 
 class CoursesEndPoints {

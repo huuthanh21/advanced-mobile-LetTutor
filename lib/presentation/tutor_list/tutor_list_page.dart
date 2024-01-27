@@ -418,9 +418,8 @@ class _TutorListPageState extends State<TutorListPage> {
           .toList();
     }
 
-    sortTutorsByFavorite(filteredTutors);
-
     sortTutorsByRating(filteredTutors);
+    sortTutorsByFavorite(filteredTutors);
 
     return filteredTutors;
   }
