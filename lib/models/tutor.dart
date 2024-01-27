@@ -100,7 +100,7 @@ class Tutor {
         experience: tutor["experience"] ?? "Không có thông tin",
         videoUrl: tutor["video"] ?? Uri.parse("https://www.w3schools.com/tags/mov_bbb.mp4"),
         specializations: tutor['specialties'] != null
-            ? (tutor['specialties'] as String).split(',')
+            ? specializationMapper((tutor['specialties'] as String).split(','))
             : List<String>.empty(),
         languages: tutor['languages'] != null
             ? (tutor['languages'] as String).split(',')
@@ -219,6 +219,53 @@ class Tutor {
 
   static Future<List<Schedule>> getSchedules(String tutorId) {
     return ApiService().getSchedules(tutorId);
+  }
+
+  static List<String> specializationMapper(List<String> abreviations) {
+    for (int i = 0; i < abreviations.length; i++) {
+      switch (abreviations[i]) {
+        case "business-english":
+          abreviations[i] = "Tiếng Anh cho công việc";
+          break;
+        case "ielts":
+          abreviations[i] = "IELTS";
+          break;
+        case "toeic":
+          abreviations[i] = "TOEIC";
+          break;
+        case "toefl":
+          abreviations[i] = "TOEFL";
+          break;
+        //pet, ket
+        case "pet":
+          abreviations[i] = "PET";
+          break;
+        case "ket":
+          abreviations[i] = "KET";
+          break;
+        //starters, movers, flyers
+        case "starters":
+          abreviations[i] = "STARTERS";
+          break;
+        case "movers":
+          abreviations[i] = "MOVERS";
+          break;
+        case "flyers":
+          abreviations[i] = "FLYERS";
+          break;
+        // conversational english
+        case "conversational-english":
+          abreviations[i] = "Giao tiếp";
+          break;
+        // english for kids
+        case "english-for-kids":
+          abreviations[i] = "Tiếng Anh cho trẻ em";
+          break;
+        default:
+          abreviations[i] = "";
+      }
+    }
+    return abreviations;
   }
 }
 
