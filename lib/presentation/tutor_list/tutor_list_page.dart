@@ -420,6 +420,8 @@ class _TutorListPageState extends State<TutorListPage> {
 
     sortTutorsByFavorite(filteredTutors);
 
+    sortTutorsByRating(filteredTutors);
+
     return filteredTutors;
   }
 
@@ -451,5 +453,17 @@ class _TutorListPageState extends State<TutorListPage> {
     int totalHours = hours ~/ 60;
     int totalMinutes = hours % 60;
     return "$totalHours giờ $totalMinutes phút";
+  }
+
+  void sortTutorsByRating(List<Tutor> filteredTutors) {
+    filteredTutors.sort((a, b) {
+      if (a.calculatedRating > b.calculatedRating) {
+        return -1;
+      } else if (a.calculatedRating < b.calculatedRating) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
   }
 }
