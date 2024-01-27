@@ -120,26 +120,38 @@ class _TutorListPageState extends State<TutorListPage> {
                     "Buổi học sắp diễn ra",
                     style: TextStyle(fontSize: 24, fontFamily: "Open Sans", color: Colors.white),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "T7, 04 Thg 11 23 18:00 - 18:25 (còn 27:13:25)",
-                        style:
-                            TextStyle(fontSize: 18, fontFamily: "Open Sans", color: Colors.white),
-                      ),
-                      const Gap(20),
-                      TextButton.icon(
-                          onPressed: () {},
-                          icon:
-                              Icon(Icons.video_call, color: Theme.of(context).colorScheme.primary),
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.white,
-                          ),
-                          label: Text("Vào lớp học",
-                              style: TextStyle(color: Theme.of(context).colorScheme.primary))),
-                    ],
-                  ),
+                  FutureBuilder(
+                      future: _bookingDataProvider.getUpcomingBooking(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var formattedString = snapshot.data;
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                formattedString!,
+                                style: const TextStyle(
+                                    fontSize: 18, fontFamily: "Open Sans", color: Colors.white),
+                              ),
+                              const Gap(20),
+                              TextButton.icon(
+                                  onPressed: () {},
+                                  icon: Icon(Icons.video_call,
+                                      color: Theme.of(context).colorScheme.primary),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                  ),
+                                  label: Text("Vào lớp học",
+                                      style:
+                                          TextStyle(color: Theme.of(context).colorScheme.primary))),
+                            ],
+                          );
+                        } else if (snapshot.hasError) {
+                          return const Text("Error");
+                        } else {
+                          return const Text("Loading...");
+                        }
+                      }),
                   FutureBuilder(
                       future: _tutorDataProvider.getTotalHours(),
                       builder: (context, snapshot) {

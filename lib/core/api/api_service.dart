@@ -3,9 +3,11 @@ import 'dart:developer';
 
 import 'package:faker/faker.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:lettutor/common/constant.dart';
 import 'package:lettutor/models/booking.dart';
 
+import '../../common/converters/start_datetime_to_schedule_range.dart';
 import '../../models/course.dart';
 import '../../models/ebook.dart';
 import '../../models/tutor.dart';
@@ -387,5 +389,30 @@ class ApiService {
       rethrow;
     }
     return false;
+  }
+
+  Future<String> getUpcomingBooking() async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${BookingsEndPoints.bookingNextEndPoint}');
+      print(url.toString());
+
+      var headers = {'Authorization': 'Bearer ${Tokens.accessToken}'};
+
+      final response = await http.get(url, headers: headers);
+
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Booking upComingBooking = Booking.upcomingBooking(response.body);
+        // format to string
+        var time = DateFormat('EEE, dd MMM yy', 'vi_VN').format(upComingBooking.dateTime);
+        var timeRange = formatDateTimeToTimeRange(upComingBooking.dateTime);
+        return '$time $timeRange';
+      } else {
+        print(response.body);
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return "";
   }
 }

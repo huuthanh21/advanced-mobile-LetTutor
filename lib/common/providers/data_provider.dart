@@ -160,6 +160,10 @@ class BookingDataProvider {
   Future<List<History>> getHistorySchedule() async {
     return await ApiService().getHistorySchedule();
   }
+
+  Future<String> getUpcomingBooking() async {
+    return await ApiService().getUpcomingBooking();
+  }
 }
 
 class CourseDataProvider {

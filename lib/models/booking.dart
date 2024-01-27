@@ -54,6 +54,42 @@ class Booking {
     }
     return bookingModels;
   }
+
+  static Booking upcomingBooking(String json) {
+    Map<String, dynamic> apiResponse = jsonDecode(json);
+    print("Upcoming");
+
+    List<dynamic> bookings = apiResponse["data"];
+
+    // sort by date
+    bookings.sort((a, b) => a["scheduleDetailInfo"]["startPeriodTimestamp"]
+        .compareTo(b["scheduleDetailInfo"]["startPeriodTimestamp"]));
+    // get most recent but not passed
+
+    var booking = bookings.firstWhere(
+        (element) => DateTime.fromMillisecondsSinceEpoch(
+                element["scheduleDetailInfo"]["startPeriodTimestamp"])
+            .isAfter(DateTime.now()),
+        orElse: () => null);
+
+    return Booking(
+      id: booking["scheduleDetailInfo"]["scheduleId"],
+      tutor: Tutor(
+        id: "",
+        name: "",
+        profilePictureUrl: "",
+        description: '',
+        countryCode: "VN",
+        education: '',
+        hobbies: '',
+        experience: '',
+        videoUrl: Uri(path: ''),
+      ),
+      dateTime: DateTime.fromMillisecondsSinceEpoch(
+          booking["scheduleDetailInfo"]["startPeriodTimestamp"]),
+      status: BookingStatus.confirmed,
+    );
+  }
 }
 
 class Grading {
