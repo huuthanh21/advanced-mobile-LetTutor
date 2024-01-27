@@ -93,14 +93,14 @@ class _TutorCardState extends State<TutorCard> {
                               style: TextStyle(color: Colors.grey.shade600),
                             ),
                           ]),
-                          if (widget.tutor.reviews.isEmpty)
+                          if (widget.tutor.calculatedRating == 0)
                             Text(
                               "Không có đánh giá",
                               style: TextStyle(
                                   color: Colors.grey.shade600, fontStyle: FontStyle.italic),
                             )
                           else
-                            RatingBar(rating: widget.tutor.rating),
+                            RatingBar(rating: widget.tutor.calculatedRating.round()),
                         ],
                       )
                     ],

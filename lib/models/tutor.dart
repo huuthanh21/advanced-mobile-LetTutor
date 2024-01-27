@@ -108,6 +108,7 @@ class Tutor {
         courses: null,
         reviews: null,
         schedules: null,
+        calculatedRating: tutor["rating"] ?? 0,
       ));
     }
     return tutorModels;
