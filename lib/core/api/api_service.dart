@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:faker/faker.dart';
 import 'package:http/http.dart' as http;
 import 'package:lettutor/common/constant.dart';
 import 'package:lettutor/models/booking.dart';
 
+import '../../models/course.dart';
+import '../../models/ebook.dart';
 import '../../models/tutor.dart';
 import '../../models/user.dart';
 
@@ -258,5 +261,83 @@ class ApiService {
       rethrow;
     }
     return [];
+  }
+
+  Future<List<Course>> getCourses() async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${CoursesEndPoints.coursesEndPoint}');
+      url = url.replace(
+        queryParameters: {
+          'page': '1',
+          'size': '100',
+        },
+      );
+      print(url.toString());
+
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        List<Course> courses = Course.coursesFromJson(response.body);
+        return courses;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return [];
+  }
+
+  Future<List<Ebook>> getEbooks() async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${CoursesEndPoints.ebooksEndPoint}');
+
+      url = url.replace(
+        queryParameters: {
+          'page': '1',
+          'size': '10',
+        },
+      );
+      print(url.toString());
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        List<Ebook> ebooks = Ebook.ebooksFromJson(response.body);
+        return ebooks;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return [];
+  }
+
+  Future<Course> getCourseById(String id) async {
+    try {
+      var url = Uri.parse('${ApiConstants.baseUrl}${CoursesEndPoints.coursesEndPoint}/$id');
+      print(url.toString());
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer ${Tokens.accessToken}',
+      });
+      print(response.statusCode);
+      if (response.statusCode == 200) {
+        Course course = await Course.courseModelFromJson(response.body);
+        return course;
+      }
+    } catch (e) {
+      rethrow;
+    }
+    return Course(
+      id: faker.guid.guid(),
+      type: "",
+      title: "",
+      description: "",
+      whyDescription: "",
+      whatDescription: "",
+      level: Level.any,
+      topics: [],
+      coverUri: Uri.parse(""),
+    );
   }
 }

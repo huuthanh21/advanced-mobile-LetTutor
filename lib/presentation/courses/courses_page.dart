@@ -21,6 +21,8 @@ class CoursesPage extends StatefulWidget {
 }
 
 class _CoursesPageState extends State<CoursesPage> with SingleTickerProviderStateMixin {
+  late List<Course> _courses;
+  late List<Ebook> _ebooks;
   late List<Course> _displayedCourses;
   late List<Ebook> _displayedEbooks;
 
@@ -47,8 +49,10 @@ class _CoursesPageState extends State<CoursesPage> with SingleTickerProviderStat
   void initState() {
     super.initState();
 
-    _displayedCourses = context.read<CourseDataProvider>().courses;
-    _displayedEbooks = context.read<CourseDataProvider>().ebooks;
+    _ebooks = [];
+    _courses = [];
+    _displayedCourses = [];
+    _displayedEbooks = [];
 
     _selectedLevelFilters = [];
     _selectedTypeFilters = [];
@@ -75,61 +79,75 @@ class _CoursesPageState extends State<CoursesPage> with SingleTickerProviderStat
   Widget _getTabAtIndex(int index) {
     switch (index) {
       case 0:
-        return Consumer<CourseDataProvider>(
-          builder: (context, courseDataProvider, child) {
-            _displayedCourses = getFilteredCourses();
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(
-                courseTypes.length,
-                (index) => Column(
+        return FutureBuilder(
+            future: context.read<CourseDataProvider>().getCourses(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                _courses = snapshot.data as List<Course>;
+                _displayedCourses = getFilteredCourses();
+                return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (getCoursesByType(index).isNotEmpty) ...[
-                      const Gap(20),
-                      Text(
-                        courseTypes[index],
-                        style: const TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 26,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const Gap(20),
-                      Wrap(
-                        spacing: 20,
-                        runSpacing: 30,
-                        children: List.generate(
-                          getCoursesByType(index).length,
-                          (i) => CourseCard(course: getCoursesByType(index)[i]),
-                        ),
-                      ),
-                    ]
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      case 1:
-        return Consumer<CourseDataProvider>(
-          builder: (context, courseDataProvider, child) {
-            _displayedEbooks = getFilteredEbooks();
-            return Column(
-              children: [
-                const Gap(20),
-                Wrap(
-                  spacing: 20,
-                  runSpacing: 30,
                   children: List.generate(
-                    _displayedEbooks.length,
-                    (i) => EbookCard(ebook: _displayedEbooks[i]),
+                    courseTypes.length,
+                    (index) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (getCoursesByType(index).isNotEmpty) ...[
+                          const Gap(20),
+                          Text(
+                            courseTypes[index],
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 26,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const Gap(20),
+                          Wrap(
+                            spacing: 20,
+                            runSpacing: 30,
+                            children: List.generate(
+                              getCoursesByType(index).length,
+                              (i) => CourseCard(course: getCoursesByType(index)[i]),
+                            ),
+                          ),
+                        ]
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
-        );
+                );
+              } else if (snapshot.hasError) {
+                return throw snapshot.error!;
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            });
+      case 1:
+        return FutureBuilder(
+            future: context.read<CourseDataProvider>().getEbooks(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                _ebooks = snapshot.data as List<Ebook>;
+                _displayedEbooks = getFilteredEbooks();
+                return Column(
+                  children: [
+                    const Gap(20),
+                    Wrap(
+                      spacing: 20,
+                      runSpacing: 30,
+                      children: List.generate(
+                        _displayedEbooks.length,
+                        (i) => EbookCard(ebook: _displayedEbooks[i]),
+                      ),
+                    ),
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return throw snapshot.error!;
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            });
       case 2:
         return const Text('Interactive E-book');
       default:
@@ -148,7 +166,7 @@ class _CoursesPageState extends State<CoursesPage> with SingleTickerProviderStat
   }
 
   List<Course> getFilteredCourses() {
-    List<Course> filteredCourses = context.read<CourseDataProvider>().courses;
+    List<Course> filteredCourses = _courses;
 
     if (_courseNameController.text.isNotEmpty) {
       filteredCourses = filteredCourses
@@ -181,7 +199,7 @@ class _CoursesPageState extends State<CoursesPage> with SingleTickerProviderStat
   }
 
   List<Ebook> getFilteredEbooks() {
-    List<Ebook> filteredEbooks = context.read<CourseDataProvider>().ebooks;
+    List<Ebook> filteredEbooks = _ebooks;
 
     if (_courseNameController.text.isNotEmpty) {
       filteredEbooks = filteredEbooks
@@ -339,7 +357,7 @@ class _CoursesPageState extends State<CoursesPage> with SingleTickerProviderStat
                           SizedBox(
                             width: 300,
                             child: MultiSelectDialogField(
-                              initialValue: _selectedLevelFilters,
+                              initialValue: _selectedTypeFilters,
                               title: const Text("Chọn danh mục"),
                               buttonText: const Text(
                                 "Chọn danh mục",

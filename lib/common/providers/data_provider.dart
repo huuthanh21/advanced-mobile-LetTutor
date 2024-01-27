@@ -177,4 +177,16 @@ class CourseDataProvider {
   List<Course> getCoursesByType(int typeIndex) {
     return _courses.where((course) => course.type == courseTypes[typeIndex]).toList();
   }
+
+  Future<List<Course>> getCourses() async {
+    return await ApiService().getCourses();
+  }
+
+  Future<Course> getCourseById(String id) async {
+    return await ApiService().getCourseById(id);
+  }
+
+  Future<List<Ebook>> getEbooks() async {
+    return await ApiService().getEbooks();
+  }
 }

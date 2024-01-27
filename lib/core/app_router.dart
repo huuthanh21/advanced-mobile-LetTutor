@@ -47,29 +47,25 @@ final GoRouter router = GoRouter(
         ),
       ],
     ),
-    GoRoute(
-        path: '/schedule',
-        name: "schedule",
-        builder: (context, state) => const SchedulePage()),
-    GoRoute(
-        path: '/history',
-        name: "history",
-        builder: (context, state) => const HistoryPage()),
+    GoRoute(path: '/schedule', name: "schedule", builder: (context, state) => const SchedulePage()),
+    GoRoute(path: '/history', name: "history", builder: (context, state) => const HistoryPage()),
     GoRoute(
       path: '/courses',
       name: "courses",
       builder: (context, state) => const CoursesPage(),
       routes: [
         GoRoute(
-            path: 'course',
-            name: "course",
-            builder: (context, state) => const CourseDetailPage()),
+          path: 'course/:courseId',
+          name: "course",
+          builder: (context, state) => CourseDetailPage(
+            courseId: state.pathParameters['courseId']!,
+          ),
+        ),
       ],
     ),
   ],
   redirect: (context, state) {
-    if (context.read<LoginProvider>().isLoggedIn ||
-        state.matchedLocation == "/register") {
+    if (context.read<LoginProvider>().isLoggedIn || state.matchedLocation == "/register") {
       return null;
     }
 

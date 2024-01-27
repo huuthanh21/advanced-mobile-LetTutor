@@ -22,6 +22,11 @@ class BookingsEndPoints {
   static String cancelBookingEndPoint = '/booking/schedule-detail';
 }
 
+class CoursesEndPoints {
+  static String coursesEndPoint = '/course';
+  static String ebooksEndPoint = '/e-book';
+}
+
 class Tokens {
   static final Tokens _instance = Tokens._internal();
 

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:faker/faker.dart';
 
 import 'course.dart';
@@ -7,13 +9,13 @@ class Ebook {
   final String title;
   final String description;
   final Level level;
-  final Uri coverUri = Uri.parse(
-      'https://api.app.lettutor.com/file/be4c3df8-3b1b-4c8f-a5cc-75a8e2e6626afilewhat_a_world.jpeg');
+  final Uri coverUri;
   final Uri uri;
 
   Ebook({
     required this.title,
     required this.description,
+    required this.coverUri,
     required this.level,
     required this.uri,
   });
@@ -24,6 +26,23 @@ class Ebook {
       description: faker.lorem.sentences(3).join(' '),
       level: Level.values[faker.randomGenerator.integer(Level.values.length - 1)],
       uri: Uri.parse('https://google.com'),
+      coverUri: Uri.parse("google.com"),
     );
+  }
+
+  static List<Ebook> ebooksFromJson(String json) {
+    Map<String, dynamic> apiResponse = jsonDecode(json);
+    List<dynamic> ebooks = apiResponse["data"]["rows"];
+    // Convert to Tutor model
+    List<Ebook> ebookModels = [];
+    for (var ebook in ebooks) {
+      ebookModels.add(Ebook(
+          title: ebook["name"],
+          description: ebook["description"],
+          level: Level.values[int.parse(ebook["level"].toString())],
+          uri: Uri.parse(ebook["fileUrl"]),
+          coverUri: Uri.parse(ebook["imageUrl"])));
+    }
+    return ebookModels;
   }
 }

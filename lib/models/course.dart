@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:faker/faker.dart';
 import 'package:intl/intl.dart' show toBeginningOfSentenceCase;
 
@@ -48,8 +50,7 @@ const List<String> courseTypes = [
 class Course {
   final String id;
   final String type;
-  final Uri coverUri = Uri.parse(
-      'https://camblycurriculumicons.s3.amazonaws.com/5e0e8b212ac750e7dc9886ac?h=d41d8cd98f00b204e9800998ecf8427e');
+  final Uri coverUri;
   final String title;
   final String description;
   final String whyDescription;
@@ -66,6 +67,7 @@ class Course {
     required this.whatDescription,
     required this.level,
     required this.topics,
+    required this.coverUri,
   });
 
   static Course getRandomCourse() {
@@ -77,6 +79,7 @@ class Course {
       whyDescription: toBeginningOfSentenceCase(faker.lorem.sentences(2).join(' '))!,
       whatDescription: toBeginningOfSentenceCase(faker.lorem.sentences(2).join(' '))!,
       level: Level.values[faker.randomGenerator.integer(2)],
+      coverUri: Uri.parse("google.com"),
       topics: List.generate(
         faker.randomGenerator.integer(10, min: 4),
         (index) => CourseTopic(name: faker.lorem.words(2).join(' ')),
@@ -96,9 +99,60 @@ class Course {
         whatDescription: '',
         level: Level.any,
         topics: [],
+        coverUri: Uri.parse("google.com"),
       ));
     }
     return courses;
+  }
+
+  static List<Course> coursesFromJson(String json) {
+    Map<String, dynamic> apiResponse = jsonDecode(json);
+    List<dynamic> courses = apiResponse["data"]["rows"];
+    // Convert to Tutor model
+    List<Course> courseModels = [];
+    for (var course in courses) {
+      courseModels.add(Course(
+          id: course["id"],
+          type: course["categories"][0]["title"],
+          title: course["name"],
+          description: course["description"],
+          whyDescription: course["reason"],
+          whatDescription: course["purpose"],
+          level: Level.values[int.parse(course["level"].toString())],
+          topics: dynamicTopicsFromJson(course["topics"]),
+          coverUri: Uri.parse(course["imageUrl"])));
+    }
+    return courseModels;
+  }
+
+  static dynamicTopicsFromJson(topics) {
+    List<CourseTopic> courseTopics = [];
+    for (var topic in topics) {
+      courseTopics.add(CourseTopic(name: topic["name"], contentUri: Uri.parse(topic["nameFile"])));
+    }
+    return courseTopics;
+  }
+
+  static Future<Course> courseModelFromJson(String json) async {
+    try {
+// Parse json to Dart object
+      Map<String, dynamic> course = jsonDecode(json)["data"];
+      // Convert to Tutor model
+      return Course(
+        id: course["id"],
+        type: "",
+        title: course["name"],
+        description: course["description"],
+        whyDescription: course["reason"],
+        whatDescription: course["purpose"],
+        level: Level.values[int.parse(course["level"].toString())],
+        topics: dynamicTopicsFromJson(course["topics"]),
+        coverUri: Uri.parse(course["imageUrl"]),
+      );
+    } catch (e) {
+      print("error in tutor");
+      rethrow;
+    }
   }
 }
 

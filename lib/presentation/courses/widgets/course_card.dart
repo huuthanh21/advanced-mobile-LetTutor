@@ -12,7 +12,9 @@ class CourseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.push(context.namedLocation('course')),
+      onTap: () {
+        context.push(context.namedLocation('course', pathParameters: {'courseId': course.id}));
+      },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
